@@ -3,4 +3,23 @@
 One of the main reasons for delay in packet switched networks is the output
 buffer. If the output buffer becomes full, the router, or switch, begins to drop
 the packets, resulting in a delay. This is also called ``packet loss''. Another
-reason is store-and-forward. 
+reason is store-and-forward, which requires the router, or switch, to have the
+whole packet received before transmitting it. For large packets this would take
+a lot of time.
+
+\subsubsection{Transmission speed}
+\textbf{Part 1}\\
+To calculate the round trip time we add the nodal delays between each source.
+From the laptop to the access point the nodal delay is 2 ms, from the access
+point to the modem the delay is 1 ms, and finally from the modem to the DSLAM
+the nodal is 5 ms. This gives 8 ms in total, and then we add the delay from the
+DSLAM to the diku.dk server, which is 24 ms, resulting in a total trip time of
+32 ms. Then we multiply by 2, since the round trip time is from the client to
+the server, and back again, giving a round trip time of 64 ms.
+
+\noindent \textbf{Part 2}\\
+First she needs to send a SYN to the server, resulting in a SYN-ACK from the
+server, and finally an ACK from the client. This is a round trip time of 1.5.
+Finally she sends her packet, which is a round trip time of 1. So we have a
+total round trip time of 2.5 that is multiplied with 64, giving a total send
+time of 160 ms.
