@@ -1,0 +1,42 @@
+\subsection{HTTP}
+
+\subsubsection{HTTP Semantics}
+\paragraph{Part 1} The purpose of the method field in HTTP is to give different
+options as to what is being done. Am I Sending you some content or just trying
+to get a resource. The practical difference between a GET and POST request is
+almost invisible - although recent developments with webservices have
+emphasized the difference, and made a clear stand towards the no-side-effect of
+GET requests as opposed to POST, that isn't considered a ``safe'' method.
+
+\paragraph{Part 2} Without the Host-header it is not possible, to host multiple
+domains with different content on a single IP. Said in another way, the
+Host-header enables a single host on a single IP to identify several logical
+hosts and by that multiple ``websites''.
+
+\paragraph{Part 3} The returned status code is 302, which means the requested
+resource was found at this location, but has moved temporarily. The redirect
+location is http://www.google.dk(Location-header), Cache-control indicates that
+the response is not cached(other than the final receiver) aka private, 2 
+cookies are included and google has their own(so far) unknown server called 
+``gws''. The responsecode in this case is important in 2-ways, first it tells
+us that google would like us to use the danish google domain, secondly it is
+only a temporary redirect, meaning google could move their danish customers to
+f.ex. sweden with minor problems.
+
+\subsubsection{HTTP Headers and fingerprinting}
+\paragraph{Part 1} These header-fields are used to introduce state in the
+otherwise stateless HTTP - therefore they must also be able to identify the
+user uniqely, such that UserA doesn't get UserB shoppingcart shown.
+
+\paragraph{Part 2} Security and sensitive information..
+
+\paragraph{Part 3} E-TAGS See section 13.3.2-3 and 14.19 RFC2616
+
+\subsubsection{The case of Deep Packet Inspection}
+\paragraph{Part 1} To block grooveshark.com, '3' could have used IP or DNS, or
+as described below a web-proxy. IP blocking, DNS blocking 
+
+\paragraph{Part 2} This is a violation since a lower layer service is made
+aware of a higher level service. To enforce the layering, '3' could force their
+customers to use a HTTP-Proxy which they control, the proxy could then be used 
+to control what traffic is allowed and not.
