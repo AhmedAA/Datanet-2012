@@ -79,6 +79,14 @@ class ChatPeer:
         """
 
         # Setup the connection with the name server.
+        self.name_server_socket = socket.socket(
+            socket.AF_INET, socket.SOCK_STREAM)
+
+        self.name_server_socket.connect((
+            self.name_server_ip,
+            self.name_server_port))
+
+        self.connected = 1
 
         # Use the logger object whenever a significant event occurs (such as
         # successfully or unsuccessfully connecting with the name server).
@@ -142,7 +150,19 @@ class ChatPeer:
             return
         
         # Perform the handshake protocol.
+        handshake_msg = "HELLO "+self.nickname+" "+self.client_listen_port
+        res = self.name_server_socket.sendall(handshake_msg)
 
+        if(res == None):
+            read = self.name_server_socket.recv(BUFFER_SIZE)
+            if(read.startsWith("100")):
+                # Great success
+            else if(read.startsWith("101")):
+                # Nick taken
+            else if(read.startsWith("102")):
+                # Jackass server
+            else:
+                # FATAL - returned something completely wrong
 
     def handshake_peer( self
                       , sock
