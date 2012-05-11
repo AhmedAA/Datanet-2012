@@ -26,5 +26,9 @@ from the access point to the modem is 100 Mb/s, from modem to DSLAM is 2 Mb/s,
 and from the DSLAM to DIKUs servers is 1 Gb/s.
 This results in the following:
 \[
-\frac[5120000][54 \cdot 10^6]
+\frac{5120000}{54 \cdot 10^6} + \frac{5120000}{100 \cdot 10^6} +
+\frac{5120000}{2 \cdot 10^6} + \frac{5120000}{1 \cdot 10^7} = 2
 \]
+and then we have a RTT of 1.5 ms since she has to send a SYN, then receive a
+SYN-ACK, and finally send an ACK, before she can send the data. We then end up
+with a transmission time of $1.5 + 2 = 3.5 ms$
