@@ -1,12 +1,22 @@
 \subsection{DNS}
 \subsubsection{DNS Provisions}
-DNS has been built from the ground up to be distributed, across a hierarchy of organized servers around
-the world. Re-ordering of IP addresses on each request allow a simple form of round-robin \textbf{load
-balancing}, and because requests can return NS-type records which must then be asked in turn, it becomes
-easy for both root-level, TLD, authoritative and local DNS servers to provide load-balancing.
-\textbf{Effeciency} is achieved through re-directing requests to more local DNS servers, combined with 
-the very crucial ability to cache request mappings. In addition, the DNS message format can contain a
-variable number of resource records (RRs), so a single DNS request will be enough to decide which next
-DNS server to approach, or to receive a list of RRs with type A/MX/CNAME.
+\textbf{Effeciency} is, amongst other things, achieved in the DNS Message Format. It allows the serving of multiple RRs 
+in a single request, meaning that any DNS request will either lead you to the target you're looking for (A/CNAME/MX), or
+provide you with further NS records to ask another DNS server for the answer. In addition, \textbf{cacheing} is an important
+strategy in maintaining the effeciency of DNS requests. Requests will drive you toward the correct DNS servers that
+houses the information you need, hopefully localized near the client. Fault tolerance and scalability are provided by IP-reordering
+on each new request, along with the ability to forward to a number of different available DNS servers to serve the request.
 
 \subsubsection{DNS Lookup and Format}
+\textbf{Part 1:}\\
+CNAME records allow you to provide any number of alias hostnames, allowing you to have f.ex ftp.myserver.com and webmail.myserver.com
+that both point to the same IP address. DNS provides simple load-balancing through re-ordering the IP addresses that it returns, on each
+subsequent request. This is a primitive form of round-robin, and will in most cases mean that a different server is contacted by the requester,
+since most services will simply pick the first IP address provided. 
+
+\noindent \textbf{Part 2:}\\
+
+\noindent \textbf{Part 3:}\\
+
+
+\subsubsection{}
