@@ -28,14 +28,14 @@
 
 
 
-\textsc{\LARGE G-assignment}\\[1.5cm]
+\textsc{\LARGE First assignment}\\[1.5cm]
 
-\textsc{\Large Operating Systems and Multiprogramming, block 3 2012}\\[0.5cm]
+\textsc{\Large Computer Networking, block 4 2012}\\[0.5cm]
 
 
 \HRule \\[0.4cm]
 
-{ \bfseries Second G-assignment \\ User Processes and System Calls in BUENOS}\\[1cm]
+%{ \bfseries Second G-assignment \\ User Processes and System Calls in BUENOS}\\[1cm]
 %\includegraphics[width=0.8\textwidth]{carrie}\\[0.1cm]
 
 
@@ -49,6 +49,8 @@ Ahmed Al Aqtash \\
 \textit{ahmed.aqtash@gmail.com}\\
 Nicolai Willems \\
 \textit{niwil90@gmail.com}\\
+Martin Grünbaum \\
+\textit{martin@itsolveonline.net}\\
 \end{flushleft}
 \end{minipage}
 \begin{minipage}{0.4\textwidth}
@@ -70,76 +72,7 @@ Nicolai Willems \\
 \newpage
 \tableofcontents
 \newpage
-\section{User Processes}
-\subsection*{1}
-\subsubsection*{a}
-The process data-structure is defined with the following fields:
-\begin{description}
-\item[pid] of type process\_id\_t, defines a ``handle'' for the process, this
-is not meant to correspond directly with process table placement, but rather be
-a growing number as the system runs, this is not the case in our implementation.
-\item[executable] of type char*, to hold the name of the currently executing 
-program
-\item[parent\_process] of type process\_id\_t, refers to the parent process,
-this is probably usefull when joining and finishing.
-\item[state] of type process\_state\_t, describes the current state of the
-process, wheteher it is sleeping, ready, free or zombie. This is used when
-checking the process table for free entries.
-\item[child\_processes] of type process\_id\_t*, used to point to the first
-child of the current process - this is meant as a utility when finishing a
-thread, mainly to see if it has children and then shut these down.
-\item[file\_handles] of type int*, used to contain a handle to each open file,
-even though none of this is implemented so far, the roadmap pointed to this.
-\item[return\_value] of type void*, used to hold the returned value aster going
-to zombie mode.
-\item[next] of type process\_id\_t, points to the next process. F.ex. when a
-number of child processes is spawned, these could point to each other.
-\end{description}
+\section{}
 
-\subsubsection*{b}
-To manage all processes in the system, a process table has been created. The
-model for this process table has been the original thread table.
-
-We chose 42 as the maximum amount of processes. 42 seems as a reasonable
-maximum number of processes, since only 31 threads(32 minus idle) can be 
-created this leaves a total of 11 possible zombie processes. A better estimate
-would probably have been 3 times the number of threads(93), this makes room for
-each ``mother'' process to have 2 children, which might be zombie-state or
-waiting to be handled.
-
-\subsubsection*{c}
-Two helper methods has been created. They are called \_process\_start and
-\_process\_start\_s. The first does what the original process\_start did, and
-the second is just a wrapper to ensure no warnings from GCC.
-
-Process\_start has been altered to now find a free process and then call
-\_process\_start with the found PID.
-
-Process\_spawn, is starting a process in a seperate thread, by calling
-thread\_create with \_process\_start as its argument, and a free PID as
-calling argument.
-
-Process\_finish and join has been implemented in a straight forward way. No
-special care has been taken. The same goes for process\_get\_current\_process.
-
-\section{System Calls in BUENOS}
-The subtasks has been implemented the straight forward way.
-A simple overview is shown below.
-
-\begin{description}
-\item[SYSCALL\_EXEC] Starts a new process in a new thread. This is accomplished
-by calling process\_spawn()
-\item[SYSCALL\_EXIT] Calls process\_finish() with the given return value, the
-return value is expected to be in register A1
-\item[SYSCALL\_JOIN] Calls process\_join() with the given process ID, the ID is
-expected to be in register A1
-\item[SYSCALL\_READ] Uses the following registers: A1 as file handle, A2 buffer
-to read into and A3 as the number of characters to read. It uses the device and
-TTY mechanism. It sets the last read index in the buffer as 0, to terminate the
-string. Furthermore it uses the VFS if the filehandle is not equal to
-FILEHANDLE\_STDIN
-\item[SYSCALL\_WRITE] Uses registers as SYSCALL\_READ, the approach is also 
-similar to that of SYSCALL\_READ, except it uses write of the GCD
-\end{description}
 
 \end{document}
