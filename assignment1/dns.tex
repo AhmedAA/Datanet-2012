@@ -1,1 +1,12 @@
 \subsection{DNS}
+\subsubsection{DNS Provisions}
+DNS has been built from the ground up to be distributed, across a hierarchy of organized servers around
+the world. Re-ordering of IP addresses on each request allow a simple form of round-robin \textbf{load
+balancing}, and because requests can return NS-type records which must then be asked in turn, it becomes
+easy for both root-level, TLD, authoritative and local DNS servers to provide load-balancing.
+\textbf{Effeciency} is achieved through re-directing requests to more local DNS servers, combined with 
+the very crucial ability to cache request mappings. In addition, the DNS message format can contain a
+variable number of resource records (RRs), so a single DNS request will be enough to decide which next
+DNS server to approach, or to receive a list of RRs with type A/MX/CNAME.
+
+\subsubsection{DNS Lookup and Format}
