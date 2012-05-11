@@ -1,5 +1,5 @@
-\subsection{Store and Forward}
-\subsubsection{Processing and delay}
+\section{Store and Forward}
+\subsection{Processing and delay}
 One of the main reasons for delay in packet switched networks is the output
 buffer. If the output buffer becomes full, the router, or switch, begins to drop
 the packets, resulting in a delay. This is also called ``packet loss''. Another
@@ -7,7 +7,7 @@ reason is store-and-forward, which requires the router, or switch, to have the
 whole packet received before transmitting it. For large packets this would take
 a lot of time.
 
-\subsubsection{Transmission speed}
+\subsection{Transmission speed}
 \textbf{Part 1}\\
 To calculate the round trip time we add the nodal delays between each source.
 From the laptop to the access point the nodal delay is 2 ms, from the access
@@ -18,8 +18,13 @@ DSLAM to the diku.dk server, which is 24 ms, resulting in a total trip time of
 the server, and back again, giving a round trip time of 64 ms.
 
 \noindent \textbf{Part 2}\\
-First she needs to send a SYN to the server, resulting in a SYN-ACK from the
-server, and finally an ACK from the client. This is a round trip time of 1.5.
-Finally she sends her packet, which is a round trip time of 1. So we have a
-total round trip time of 2.5 that is multiplied with 64, giving a total send
-time of 160 ms.
+According to the formula in the book (under transmission delay), we can
+calculate the time it takes for the packet to be pushed onto to link, and sent
+by the following $L/R$, where $L$ is the packet size in bits, and $R$ is the
+link speed in bits per second (b/s). We have a wireless uplink on 54 Mb/s, speed
+from the access point to the modem is 100 Mb/s, from modem to DSLAM is 2 Mb/s,
+and from the DSLAM to DIKUs servers is 1 Gb/s.
+This results in the following:
+\[
+\frac[5120000][54 \cdot 10^6]
+\]
