@@ -5,16 +5,29 @@ in a single request, meaning that any DNS request will either lead you to the ta
 provide you with further NS records to ask another DNS server for the answer. In addition, \textbf{cacheing} is an important
 strategy in maintaining the effeciency of DNS requests. Requests will drive you toward the correct DNS servers that
 houses the information you need, hopefully localized near the client. Fault tolerance and scalability are provided by IP-reordering
-on each new request, along with the ability to forward to a number of different available DNS servers to serve the request.
+on each new request, along with the ability to forward to a number of different available DNS servers to serve the request. From the ground
+up, DNS is built as a distributed name-service provider, not a centralized one.
 
 \subsubsection{DNS Lookup and Format}
 \textbf{Part 1:}\\
 CNAME records allow you to provide any number of alias hostnames, allowing you to have f.ex ftp.myserver.com and webmail.myserver.com
-that both point to the same IP address. DNS provides simple load-balancing through re-ordering the IP addresses that it returns, on each
-subsequent request. This is a primitive form of round-robin, and will in most cases mean that a different server is contacted by the requester,
-since most services will simply pick the first IP address provided. 
+that both point to the same IP address(es). In addition, a single CNAME record can contain a set of IP addresses. DNS provides simple 
+load-balancing through re-ordering the IP addresses that it returns, on each subsequent request. This is a primitive form of round-robin, 
+and will in most cases mean that a different server is contacted by the requester, since most services will simply pick the first IP address
+provided. 
 
 \noindent \textbf{Part 2:}\\
+A recursive query is a query for someone else to perform a lookup on your behalf; such as a client requesting a DNS entry, from a local DNS server.
+This entails further, \textbf{recursive} requests, hence the name.
+
+An iterative query is one amongst many \textbf{iterations} of queries sent out from a single machine, hence the name. This could f.ex be the
+local DNS server, which has just been sent a recursive query by a client. It will then ask a root-level DNS server for the right TLD DNS, the
+TLD DNS for one or several correct authoritative DNS servers, and then finally the authoritative DNS server for the CNAME/A/MX records. It may
+be that when the local DNS server asks the root-level server for the right TLD, that it is simply passed another name-server to ask the same
+thing, and not a direct answer.
+
+A typical DNS request will follow the above format, but does not have to. Recursive requests are very important for caching strategies, and
+to help balance load on DNS servers.
 
 \noindent \textbf{Part 3:}\\
 
