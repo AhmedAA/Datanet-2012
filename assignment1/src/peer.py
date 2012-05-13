@@ -1,3 +1,4 @@
+#! /usr/bin/env python2
 #
 # file: server.py
 #
@@ -79,20 +80,25 @@ class ChatPeer:
         """
 
         # Setup the connection with the name server.
-        self.name_server_socket = socket.socket(
-            socket.AF_INET, socket.SOCK_STREAM)
+        try:
+            self.name_server_socket = socket.socket(
+                socket.AF_INET, socket.SOCK_STREAM)
 
-        self.name_server_socket.connect((
-            self.name_server_ip,
-            self.name_server_port))
+            self.name_server_socket.connect((
+                self.name_server_ip,
+                self.name_server_port))
 
-        self.connected = 1
+            self.connected = 1
+        except:
+            self.logger.execption("Failed connecting with name server")
+            self.connected = 0
+            return 1
 
         # Use the logger object whenever a significant event occurs (such as
         # successfully or unsuccessfully connecting with the name server).
-
-        pass
-
+        #
+        self.logger.info("Connected to name server: %s" % self.name_server_ip)
+        return 0
 
     def setup_client_listener(self):
         """
@@ -100,6 +106,11 @@ class ChatPeer:
         """
 
         # Set the peer up to accept connections from other peers.
+        self.client_listen_sock = socket.socket(
+            socket.AF_INET, socket.SOCK_STREAM)
+
+        self.client_listen_sock.bind(('', self.client_listen_port))
+        self.client_listen_sock.listen(self.listen_queue_size)
 
         pass
 
@@ -116,14 +127,33 @@ class ChatPeer:
             sys.stdout.write('\n> ')
             sys.stdout.flush()
 
-            running = 0
-
             # In this loop you should:
-            #
-            # - Check if the name server is trying to send you a message.
-            # - Check if a peer is trying to send you a message.
-            # - Check if a new peer is trying to connect with you.
-            # - Check if anything was entered on the keyboard.
+            iss = self.socks2names.keys()
+            if self.client_listen_sock: insocks.append(self.client_listen_sock)
+            # outsocks used to check if it is ready to send to
+            oss = self.socks2names.keys()
+            inready, outready, errready = select.select(iss, oss, [], 30.0)
+            for s in inready:
+                if(s == sys.stdin):
+                    # - Check if anything was entered on the keyboard.
+                    data = sys.stdin.readline()
+                    if data:
+                       parse_msg(data) 
+                elif(s == self.client_listen_sock):
+                    # - Check if a new peer is trying to connect with you.
+                    #Accept and handshake
+                    client, address = s.accept()
+                    self.handshake(client, address)
+                else:
+                    # - Check if the name server is trying to send you a message
+                    # - Check if a peer is trying to send you a message.
+                    msg = s.recv(BUFFER_SIZE)
+                    if msg:
+                        self.parse_and_print(msg, s)
+                    else:
+                        # Do something error ish
+                        debug = 3
+            #running = 0
 
 
     def parse_and_print(self, msg, sock):
@@ -150,19 +180,26 @@ class ChatPeer:
             return
         
         # Perform the handshake protocol.
-        handshake_msg = "HELLO "+self.nickname+" "+self.client_listen_port
+        handshake_msg = "HELLO %s %s" % (self.nickname, str(self.client_listen_port))
         res = self.name_server_socket.sendall(handshake_msg)
 
         if(res == None):
             read = self.name_server_socket.recv(BUFFER_SIZE)
-            if(read.startsWith("100")):
+            if read.startsWith("100"):
                 # Great success
-            else if(read.startsWith("101")):
+                debug = 2
+
+            elif read.startsWith("101"):
                 # Nick taken
-            else if(read.startsWith("102")):
+                debug = 3
+
+            elif read.startsWith("102"):
                 # Jackass server
+                debug = 4
+
             else:
                 # FATAL - returned something completely wrong
+                debug = -1
 
     def handshake_peer( self
                       , sock
@@ -194,7 +231,8 @@ class ChatPeer:
 
         parts = msg.split()
 
-        if parts[0] == "/connect" and len(parts) >= 3:
+        if parts[0] == "/connect" and len(parts) >= 3: 
+            #format /connect ip port [nick]
             if self.connected:
                 self.logger.info('Closing name-server connection and opening ' \
                                  'new connection.')
@@ -225,17 +263,22 @@ class ChatPeer:
                 print "Couldn't establish connection to '%s'." % parts[1]
 
         elif parts[0] == "/nick" and len(parts) > 1:
+            # format /nick <nickname>
             self.nickname = parts[1]
 
         elif parts[0] == "/register":
             self.handshake_name_server(self.nickname)
 
         elif parts[0] == "/msg" and len(parts) > 2:
+            # format: /msg <nick> <message>
             if parts[1] == self.nickname:
                 print "Cannot send a private message to yourself."
                 return 
-
-            if parts[1] not in self.peers and self.connected:
+            
+            if parts[1] == '*':
+                self.broadcast(' '.join(parts[2:]))
+                return
+            elif parts[1] not in self.peers and self.connected:
                 addr, port = self.get_nick_addr(parts[1])
 
                 # Connect with the peer and peform the handshake protocol.
@@ -246,17 +289,21 @@ class ChatPeer:
 
                 print "Could not connect to peer '%s'" % parts[1]
                 return
+            
                         
             # Send the message to the peer.
             self.send_private_msg(parts[1], ' '.join(parts[2:]))
 
         elif parts[0] == "/all" and len(parts) > 1:
+            # format: /all <msg>
             self.broadcast(' '.join(parts[1:]))
         
         elif parts[0] == "/leave":
+            # format: /leave
             self.disconnect()
 
         elif parts[0] == "/quit":
+            # format: /quit
             print 'Shutting down...'
 
             self.disconnect()

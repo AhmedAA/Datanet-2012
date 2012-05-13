@@ -54,8 +54,9 @@ records.
 Response 5 (From a.gtld-servers.net to ns2.censurfridns.dk) contains yet-another set of NS entries in the AUTHORITY section, and their A records
 in the ADDITIONAL section. These yield the Authoritative name-servers that can tell more about grooveshark.com.
 
-Response 7 (From ns1.grooveshark.com to ns2.censurfridns.dk) contains yet-another set of NS entries in its AUTHORITY section, and their A records
-in the ADDITIONAL section. These are the records that are passed on by ns2.censurfridns.dk to the initial requesting host.
+Response 7 (From ns1.grooveshark.com to ns2.censurfridns.dk) contains, beyond the same set of name servers belonging to grooveshark, the answer
+requested by ns2.censurfridns.dk, namely the A record for grooveshark.com. This is the answer that the requesting client is looking for, and
+is passed back to it in response 8.
 
 Table \ref{tbl:rrexamples} showcases some example resource-records from this DNS request sequence.
 

@@ -1,3 +1,4 @@
+#!/usr/bin/env python2
 #
 # file: server.py
 #
@@ -26,6 +27,7 @@ class NameServer:
         """
 
         self.port = port
+        self.listen_queue_size = listen_queue_size
 
         # A mapping from names to the associated information (port, socket,
         # ip address, ...).
@@ -54,6 +56,18 @@ class NameServer:
         #
         # Set the socket options to allow reuse of the server address and bind
         # the socket.
+        self.listen_socket = socket.socket(
+            socket.AF_INET, socket.SOCK_STREAM)
+
+        self.listen_socket.setsockopt(
+            socket.SOL_SOCKET, 
+            socket.SO_REUSEADDR,
+            1
+        );
+
+        self.listen_socket.bind(('', self.port))
+
+        self.listen_socket.listen(self.listen_queue_size)
 
 
     def get_info_by_name(self, name):
@@ -76,6 +90,36 @@ class NameServer:
         parts = data.split()
 
         # Inspect the data and respond according to the protocol.
+        if parts[0] == "HELLO" and len(parts) > 3:
+            # Somebody saying hello - woot
+            peer_port = 1234
+            try:
+                peer_port = int(parts[2])
+            except ValueError:
+                # 102 Write some error message and quit
+                sock.send("101 TAKEN")
+                sock.flush() #Get that data pumped into the network
+                sock.shutdown()
+                sock.close()
+
+            if parts[1] in self.names2info.iterkeys():
+                # WRITE 101 TAKEN
+                sock.send("101 TAKEN")
+                sock.flush() #Get that data pumped into the network
+                sock.shutdown()
+                sock.close()
+                return
+
+            # All should be fine and dandy - proceed
+            #
+            ip, port = addr
+            
+            sock.send("100 CONNECTED") # Assert everything is sent
+            sock.flush()
+            sock.shutdown()
+            
+            names2info[parts[1]] = ( ip, peer_port, parts[1] sock)
+            socks2names[sock] = parts[1] 
 
     
     def run(self):
@@ -86,9 +130,20 @@ class NameServer:
         running = 1
 
         while running:
+            insocks = self.socks2names.keys()
+            insocks.append(self.listen_socket)
+            inready, outready, errready = \
+                select.select(insocks, [], [], 30.0)
             # This loop should:
             # 
-            # - Accept new connections.
+            for s in inready:
+                # - Accept new connections.
+                if(s == self.listen_socket):
+                    client, addr = s.accept()
+                    self.handshake(client, addr) 
+                else:
+                    # Something different client ish
+                    # LOOKUP OTHERS
             #
             # - Read any socket that wants to send information.
             #
@@ -96,7 +151,10 @@ class NameServer:
             # the protocol. Any message that does not adhere to the protocol
             # may be ignored.
             #
+            
             # - Clean up sockets that are dead.
+            for sock in self.socks2names.keys():
+                if 
             #
             # This loop should perform multiplexing among all sockets that are
             # currently active. 
