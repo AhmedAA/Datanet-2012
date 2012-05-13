@@ -1,0 +1,13 @@
+\section{Transport Protocols}
+\subsection{TCP reliability and utilization}
+\textbf{Part 1} \\
+We will explain the need of this by listing what each step actually does, in the
+three-way-handshake. The first SYN-packet from the client is a request to
+synchronise a sequence number that handles packets (order of arrival, identify,
+etc.). Next, the server sends a SYN-ACK packet, which accepts the synchronisation
+request and gives a sequence number. Finally the ACK-packet from the client,
+tells the server that the synchronisation has been accepted.
+
+\noindent \textbf{Part 2} \\
+TCP facilitates full-duplex traffic through the sequence numbers, between the
+client and server. This way, the traffic is fully controlled.
