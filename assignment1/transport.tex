@@ -30,8 +30,21 @@ delivered, unless someone gets completely disconnected from the internet.
 
 \subsection{Use of transport protocols}
 \textbf{DNS part 1} \\
+DNS employs the UDP protocol. DNS has a need to be extremely fast, as it is a frequently used service.
+The overhead of setting up and tearing down TCP conections, and the need to maintain stateful information
+about a TCP connection until it is torn down, are some of the reasons TCP is unsuited. In addition, the
+DNS Message format is structured in a way that attempts to give as much information as possible in a single
+request, so that no additional communication to the same name-server should be required.
 
 \noindent \textbf{DNS part 2} \\
+TCP's 3-way handshake would provide the form of end-to-end validation that DNSSEC f.ex. provides, preventing
+a range of DNS cache poisoning attacks from working. 
+
+If a DNS server of an ISP is poisoned, an attacker can re-direct to their own A records, that to the end-user will
+look identical. In a hypothetical scenario, consider a spoofed gmail.com A record, re-directing to a page that looks
+an exact replica of http://www.gmail.com/. Users would input their username and password, and if the attacker were smart,
+he would re-direct that input to the real www.gmail.com and the user would never know they had given away their username
+and password. The same situation could apply to something like a net-login for banking, or a variety of other things.
 
 \subsection*{Simple HTTP requests and responses}
 1. The minimum amount of packets that should be sent, is 5. We need to send the
