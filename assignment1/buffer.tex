@@ -13,4 +13,6 @@ would be 2 seconds.
 
 \noindent \textbf{Part 2}
 BDP tells you the maximum amount of data on a network circuit at any given time. This is important
-for protocols; if the network has a very large end-to-end delay
+for protocols; if the network has a very large end-to-end delay, then protocols relying on consistent
+and rapid transmission will have issues. Instead, the protocols should take the network into consideration
+and scale for a larger buffer transmission.
