@@ -1,0 +1,23 @@
+\section{Socket Programming}
+
+\subsection{Question 1}
+The peer client needs 2 sockets, a client socket connected to the name server,
+and a client socket in listen mode. One could argue that a third socket for
+client input is also needed, but since this isn't a socket that needs to be
+opened or treated in any way it is not counted in.
+
+\subsection{Question 2}
+The choice to use a buffer size, limits the message size, this could be
+prevented by using a special token, on the other hand a special token would
+prevent users from using this token in their messages. So the ideal solution
+would be to use a combination of tokens, this could be ``CRLF;CRLF;'', this
+would allow people to use a single new line, but not multiple.
+
+\subsection{Question 3}
+\subsection{Question 4}
+\subsection{Question 5}
+\subsection{Question 6}
+\subsection{Question 7}
+\subsection{Question 8}
+\subsection{Question 9}
+\subsection{Question 10}
