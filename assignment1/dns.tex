@@ -30,6 +30,42 @@ A typical DNS request will follow the above format, but does not have to. Recurs
 to help balance load on DNS servers.
 
 \noindent \textbf{Part 3:}\\
+\begin{table}
+\begin{tabular*}{1\textwidth}{| c | c |}
+	\hline
+	NS entry & (com., a.gtld-servers.net, NS, 172800)\\
+	\hline
+	A entry & (a.gtld-servers.net, 192.5.6.30, A, 172800)\\
+	\hline
+	CNAME entry & (www.grooveshark.com, grooveshark.com, CNAME, 2302)\\
+	\hline
+\end{tabular*}
+\caption{DNS resource-record examples}
+\label{tbl:rrexamples}
+\end{table}
 
+Figure \ref{fig:dnsreq} demonstrates an example DNS request sequence, in which a recursive DNS request is first sent to ns2.censurfridns.dk,
+followed by iterative requests to a root-level and TLD-level DNS servers. The total number of DNS messages sent in this example is 8.
+
+Response 3 (From a.root-servers.net to ns2.censurfridns.dk) contains a set of NS entries in its AUTHORITY section. However, in order to look them
+up, the recursive requester needs the actual IP to find those name servers on. This information is contained in the ADDITIONAL section, as A
+records. 
+
+Response 5 (From a.gtld-servers.net to ns2.censurfridns.dk) contains yet-another set of NS entries in the AUTHORITY section, and their A records
+in the ADDITIONAL section. These yield the Authoritative name-servers that can tell more about grooveshark.com.
+
+Response 7 (From ns1.grooveshark.com to ns2.censurfridns.dk) contains yet-another set of NS entries in its AUTHORITY section, and their A records
+in the ADDITIONAL section. These are the records that are passed on by ns2.censurfridns.dk to the initial requesting host.
+
+Table \ref{tbl:rrexamples} showcases some example resource-records from this DNS request sequence.
+
+\begin{figure}[htb]
+\centering
+\setlength\fboxsep{0pt}
+\setlength\fboxrule{0.5pt}
+\fbox{\includegraphics[scale=1]{dnsreq.png}}
+\caption{DNS Request for grooveshark.com}
+\label{fig:dnsreq}
+\end{figure}
 
 \subsubsection{}
