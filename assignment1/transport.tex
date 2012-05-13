@@ -38,4 +38,10 @@ delivered, unless someone gets completely disconnected from the internet.
 standard three-way-handshake (three packets) with a payload from the last ACK,
 then the response from the server, and a termination of the connection. \\
 
-\noindent 2. 
+\noindent 2. If we assume the case from above, then we would have two packets
+with data, out of the five packets in total. Since the last ACK packet, can have
+data in its payload, and the server sends a response.
+
+The order of the packets in HTTP matters, from a users point of view. It is not
+intuitive for the user to receive the packets in random order, to see the website
+get drawn from random positions in the browser.
