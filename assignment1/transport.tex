@@ -34,3 +34,8 @@ delivered, unless someone gets completely disconnected from the internet.
 \noindent \textbf{DNS part 2} \\
 
 \subsection*{Simple HTTP requests and responses}
+1. The minimum amount of packets that should be sent, is 5. We need to send the
+standard three-way-handshake (three packets) with a payload from the last ACK,
+then the response from the server, and a termination of the connection. \\
+
+\noindent 2. 
