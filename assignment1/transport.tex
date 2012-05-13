@@ -11,3 +11,9 @@ tells the server that the synchronisation has been accepted.
 \noindent \textbf{Part 2} \\
 TCP facilitates full-duplex traffic through the sequence numbers, between the
 client and server. The traffic is fully controlled this way.
+
+\subsection{Reliability vs overhead}
+\textbf{Part 1} \\
+TCP has various factors that create overhead. First of all there is the
+three-way-handshake. There is also the assurance of packet delivery. If a
+packet is dropped, TCP wants to send it again.
