@@ -16,4 +16,10 @@ client and server. The traffic is fully controlled this way.
 \textbf{Part 1} \\
 TCP has various factors that create overhead. First of all there is the
 three-way-handshake. There is also the assurance of packet delivery. If a
-packet is dropped, TCP wants to send it again.
+packet is dropped, TCP wants to send it again. Generally, UDP sends a stream of
+data without any acknowledgement, whereas TCP wants to make sure that the data
+has been received by the receiver. Many of the precautions taken by TCP, that
+ensures a reliable and stable connnection, gives overhead.
+
+\noindent \textbf{Part 2}
+
