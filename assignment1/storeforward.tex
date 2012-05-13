@@ -23,12 +23,19 @@ calculate the time it takes for the packet to be pushed onto to link, and sent
 by the following $L/R$, where $L$ is the packet size in bits, and $R$ is the
 link speed in bits per second (b/s). We have a wireless uplink on 54 Mb/s, speed
 from the access point to the modem is 100 Mb/s, from modem to DSLAM is 2 Mb/s,
-and from the DSLAM to DIKUs servers is 1 Gb/s.
-This results in the following:
+and from the DSLAM to DIKUs servers is 1 Gb/s. First we re-calculate 640KB to bits:
+
 \[
-\frac{5120000}{54 \cdot 10^6} + \frac{5120000}{100 \cdot 10^6} +
-\frac{5120000}{2 \cdot 10^6} + \frac{5120000}{1 \cdot 10^7} = 2ms
+	640KB = 640 \cdot 1024 \cdot 8 \text{bits} = 5242880 \text{bits}
 \]
-and then we have a RTT of 1.5 ms since she has to send a SYN, then receive a
-SYN-ACK, and finally send an ACK, before she can send the data. We then end up
-with a transmission time of $1.5ms + 2ms = 3.5 ms$
+
+Then we apply to the $L/R$ formula:
+
+\[
+\frac{5242880}{54 \cdot 10^6} + \frac{5242880}{100 \cdot 10^6} +
+\frac{5242880}{2 \cdot 10^6} + \frac{5242880}{1 \cdot 10^9} = 2.77620205
+\]
+
+With the RTT of 64ms from above, that means a 3-way handshake will take $3 \cdot 32ms = 86ms$.
+
+This gives us a total transmission time of $2.77620205s + 0,086s = 2,86220205 \quad \text{seconds}$.
