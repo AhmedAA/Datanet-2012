@@ -12,10 +12,10 @@ a lot of time.
 To calculate the round trip time we add the nodal delays between each source.
 From the laptop to the access point the nodal delay is 2 ms, from the access
 point to the modem the delay is 1 ms, and finally from the modem to the DSLAM
-the nodal is 5 ms. This gives 8 ms in total, and then we add the delay from the
+the nodal delay is 5 ms. This gives 8 ms in total, and then we add the delay from the
 DSLAM to the diku.dk server, which is 24 ms, resulting in a total trip time of
 32 ms. Then we multiply by 2, since the round trip time is from the client to
-the server, and back again, giving a round trip time of 64 ms.
+the server, and back again, giving a round trip time of \textbf{64 ms}.
 
 \noindent \textbf{Part 2}\\
 According to the formula in the book (under transmission delay), we can
@@ -27,8 +27,8 @@ and from the DSLAM to DIKUs servers is 1 Gb/s.
 This results in the following:
 \[
 \frac{5120000}{54 \cdot 10^6} + \frac{5120000}{100 \cdot 10^6} +
-\frac{5120000}{2 \cdot 10^6} + \frac{5120000}{1 \cdot 10^7} = 2
+\frac{5120000}{2 \cdot 10^6} + \frac{5120000}{1 \cdot 10^7} = 2ms
 \]
 and then we have a RTT of 1.5 ms since she has to send a SYN, then receive a
 SYN-ACK, and finally send an ACK, before she can send the data. We then end up
-with a transmission time of $1.5 + 2 = 3.5 ms$
+with a transmission time of $1.5ms + 2ms = 3.5 ms$
