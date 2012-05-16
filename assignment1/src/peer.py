@@ -90,7 +90,7 @@ class ChatPeer:
 
             self.connected = 1
         except:
-            self.logger.execption("Failed connecting with name server")
+            self.logger.exception("Failed connecting with name server")
             self.connected = 0
             return 1
 
@@ -129,16 +129,21 @@ class ChatPeer:
 
             # In this loop you should:
             iss = self.socks2names.keys()
-            if self.client_listen_sock: insocks.append(self.client_listen_sock)
+            if self.client_listen_sock: iss.append(self.client_listen_sock)
+            if self.name_server_sock: iss.append(self.name_server_sock)
+
             # outsocks used to check if it is ready to send to
             oss = self.socks2names.keys()
-            inready, outready, errready = select.select(iss, oss, [], 30.0)
-            for s in inready:
+            
+            # some = sys.stdin.readline()
+            rr, wr, er = select.select(iss, [], [])
+            # some = sys.stdin.readline()
+            for s in rr:
                 if(s == sys.stdin):
                     # - Check if anything was entered on the keyboard.
                     data = sys.stdin.readline()
                     if data:
-                       parse_msg(data) 
+                       self.parse_msg(data) 
                 elif(s == self.client_listen_sock):
                     # - Check if a new peer is trying to connect with you.
                     #Accept and handshake
@@ -147,7 +152,7 @@ class ChatPeer:
                 else:
                     # - Check if the name server is trying to send you a message
                     # - Check if a peer is trying to send you a message.
-                    msg = s.recv(BUFFER_SIZE)
+                    msg = s.recv(self.BUFFER_SIZE)
                     if msg:
                         self.parse_and_print(msg, s)
                     else:
@@ -180,26 +185,29 @@ class ChatPeer:
             return
         
         # Perform the handshake protocol.
-        handshake_msg = "HELLO %s %s" % (self.nickname, str(self.client_listen_port))
-        res = self.name_server_socket.sendall(handshake_msg)
+        handshake_msg = "HELLO %s %s" % (nickname, str(self.client_listen_port))
+        res = self.name_server_socket.send(handshake_msg)
 
         if(res == None):
-            read = self.name_server_socket.recv(BUFFER_SIZE)
-            if read.startsWith("100"):
+            read = self.name_server_socket.recv(self.BUFFER_SIZE)
+            if read.startswith("100"):
                 # Great success
+                print("Server answered 100")
                 debug = 2
-
-            elif read.startsWith("101"):
+                print("Setting self.nickname=%s" % nickname)
+                self.nickname = nickname
+            elif read.startswith("101"):
                 # Nick taken
                 debug = 3
 
-            elif read.startsWith("102"):
+            elif read.startswith("102"):
                 # Jackass server
                 debug = 4
 
             else:
                 # FATAL - returned something completely wrong
                 debug = -1
+            sys.stdout.flush()
 
     def handshake_peer( self
                       , sock
@@ -231,7 +239,9 @@ class ChatPeer:
 
         parts = msg.split()
 
-        if parts[0] == "/connect" and len(parts) >= 3: 
+        if len(parts) == 0:
+            print("Type /help if you need some")
+        elif parts[0] == "/connect" and len(parts) >= 3: 
             #format /connect ip port [nick]
             if self.connected:
                 self.logger.info('Closing name-server connection and opening ' \
@@ -271,6 +281,7 @@ class ChatPeer:
 
         elif parts[0] == "/msg" and len(parts) > 2:
             # format: /msg <nick> <message>
+            print("Sending message to: %s, isSelf: %s" % (parts[1], parts[1] == self.nickname))
             if parts[1] == self.nickname:
                 print "Cannot send a private message to yourself."
                 return 

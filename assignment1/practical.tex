@@ -14,6 +14,34 @@ would be to use a combination of tokens, this could be ``CRLF;CRLF;'', this
 would allow people to use a single new line, but not multiple.
 
 \subsection{Question 3}
+The answer is both yes and no! and it could cause some trouble. If clientA
+connects through the local loopback interface(127.0.0.1) the server would
+then serve this address for client B, which in turn then connects to itself for
+chatting with client A. On the other hand if client A connects through the
+given IP(10.0.0.1) then chatting is possible(of course without taking firewalls
+and the like, into consideration)
+
+Simply prefixed by CA, CB or NS respectively ClientA, ClientB or NameServer.
+Asserting the following IP's, NS: 10.0.0.1, CA: 10.0.0.1, CB: 10.0.0.2
+
+\begin{verbatim}
+CA -> NS: HELLO clienta 1234
+NS -> CA: 100 CONNECTED
+
+CB -> NS: HELLO clientb 1234
+NS -> CB: 100 CONNECTED
+
+CB -> NS: LOOKUP clienta
+NS -> CB: 400 INFO <ip> 1234
+
+CB -> CA: HELLO clientb 1234
+CA -> CB: 200 CONNECTED
+
+CB -> CA: MSG clientb Hello there
+
+CA -> CB: MSG clienta Well, hello to you
+\end{verbatim}
+
 \subsection{Question 4}
 \subsection{Question 5}
 \subsection{Question 6}

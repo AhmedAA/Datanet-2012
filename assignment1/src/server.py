@@ -35,7 +35,9 @@ class NameServer:
 
         # A mapping from sockets to names.
         self.socks2names = {}
-        
+
+        # A mapping from sockets to addresseses - for non handshaken sockets
+        self.handshakers = {}
 
         # Create a log object.
         # logging.basicConfig( filename="NameServer.log"
@@ -87,26 +89,27 @@ class NameServer:
         """
 
         data = sock.recv(NameServer.BUFFER_SIZE)
+        print("Received: %s" % data)
         parts = data.split()
 
         # Inspect the data and respond according to the protocol.
-        if parts[0] == "HELLO" and len(parts) > 3:
+        if parts[0] == "HELLO" and len(parts) >= 3:
+            print("Somebody saying hello")
             # Somebody saying hello - woot
             peer_port = 1234
             try:
                 peer_port = int(parts[2])
             except ValueError:
                 # 102 Write some error message and quit
-                sock.send("101 TAKEN")
+                sock.send("102 REGISTRATION REQUIRED")
                 sock.flush() #Get that data pumped into the network
                 sock.shutdown()
                 sock.close()
-
+            
+            print("Port was correct: %s" % parts[2])
             if parts[1] in self.names2info.iterkeys():
                 # WRITE 101 TAKEN
                 sock.send("101 TAKEN")
-                sock.flush() #Get that data pumped into the network
-                sock.shutdown()
                 sock.close()
                 return
 
@@ -115,11 +118,11 @@ class NameServer:
             ip, port = addr
             
             sock.send("100 CONNECTED") # Assert everything is sent
-            sock.flush()
-            sock.shutdown()
+
+            print("All is good, peer registered")
             
-            names2info[parts[1]] = ( ip, peer_port, parts[1] sock)
-            socks2names[sock] = parts[1] 
+            self.names2info[parts[1]] = ( ip, peer_port, parts[1], sock)
+            self.socks2names[sock] = parts[1]
 
     
     def run(self):
@@ -130,20 +133,24 @@ class NameServer:
         running = 1
 
         while running:
-            insocks = self.socks2names.keys()
+            insocks = self.handshakers.keys()
             insocks.append(self.listen_socket)
-            inready, outready, errready = \
-                select.select(insocks, [], [], 30.0)
+            rr, wr, er = select.select(insocks, [], [])
             # This loop should:
             # 
-            for s in inready:
+            for s in rr:
                 # - Accept new connections.
                 if(s == self.listen_socket):
                     client, addr = s.accept()
-                    self.handshake(client, addr) 
+                    print("Accepted client")
+                    # Add socket with info to
+                    self.handshakers[client] = addr
                 else:
-                    # Something different client ish
-                    # LOOKUP OTHERS
+                    print("Client ready for handshake")
+                    self.handshake(s, self.handshakers[s])
+                    del self.handshakers[s]
+
+            insocks = self.socks2names.keys()
             #
             # - Read any socket that wants to send information.
             #
@@ -153,8 +160,10 @@ class NameServer:
             #
             
             # - Clean up sockets that are dead.
-            for sock in self.socks2names.keys():
-                if 
+            
+            # for sock in self.socks2names.keys():
+            #    if sock. 
+            
             #
             # This loop should perform multiplexing among all sockets that are
             # currently active. 
@@ -162,7 +171,7 @@ class NameServer:
             # HINT: Look at all the imported modules to see which functionality
             # they provide.
 
-            running = 0
+            #running = 0
     
         # Close the server socket when exiting.
 
