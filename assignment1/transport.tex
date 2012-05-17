@@ -57,4 +57,10 @@ data in its payload, and the server sends a response.
 
 The order of the packets in HTTP matters, from a users point of view. It is not
 intuitive for the user to receive the packets in random order, to see the website
-get drawn from random positions in the browser.
+get drawn from random positions in the browser. \\
+
+\noindent 3. UDP could probably be used for HTTP, but it certainly would not
+give the desired effect. UDP does not guarantee delivery of packets, nor does it
+reassemble the packets in the correct order. Thus a user could load a HTTP page
+without getting all elements on the page, or the elements would load in random
+order since we can not assure the correct order the packets should be loaded in.
