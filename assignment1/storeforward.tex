@@ -15,7 +15,9 @@ point to the modem the delay is 1 ms, and finally from the modem to the DSLAM
 the nodal delay is 5 ms. This gives 8 ms in total, and then we add the delay from the
 DSLAM to the diku.dk server, which is 24 ms, resulting in a total trip time of
 32 ms. Then we multiply by 2, since the round trip time is from the client to
-the server, and back again, giving a round trip time of \textbf{64 ms}.
+the server, and back again, giving a round trip time of \textbf{64 ms}. We can
+leave out the propagation delay, since it only matters for connections of higher
+speed. \\
 
 \noindent \textbf{Part 2}\\
 According to the formula in the book (under transmission delay), we can
