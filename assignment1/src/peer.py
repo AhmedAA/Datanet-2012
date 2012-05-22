@@ -44,6 +44,8 @@ class ChatPeer:
         self.listen_queue_size = listen_queue_size
         self.client_listen_sock = None
 
+        # Peers not yet handshaken
+        self.incomming_peers = {}
         # Mapping from peer nicknames to their connection information.
         self.peers = {}
 
@@ -277,7 +279,10 @@ class ChatPeer:
             self.nickname = parts[1]
 
         elif parts[0] == "/register":
-            self.handshake_name_server(self.nickname)
+            if self.nickname == None:
+                print "No nickname chosen"
+            else:
+                self.handshake_name_server(self.nickname)
 
         elif parts[0] == "/msg" and len(parts) > 2:
             # format: /msg <nick> <message>
@@ -349,6 +354,21 @@ class ChatPeer:
         
         # For all of the sockets currently active, except STDIN and our listening
         # socket perform the LEAVE protocol.
+        if len(self.incomming_peers) > 0:
+            # Remove these incomming peers
+            # Aka just shut them down
+            for s in self.incomming_peers:
+                s.shutdown()
+                s.close()
+
+        if len(self.socks2names.keys()) > 1:
+            # Perform leave
+            # and close tha socks
+            for s in self.socks2names.keys():
+                if not s == sys.stdin:
+                    s.shutdown()
+                    s.close()
+                    del self.socks2names[s]
 
         self.peers = {}
         self.socks2names = {}
