@@ -225,24 +225,35 @@ class NameServer:
             self.lookup_nick(sock, parts[1])
 
         elif parts[0] == "LEAVE":
-            if parts[1] in self.names2info.iterkeys():
-                pass
+            #if parts[1] in self.names2info.iterkeys():
+            #    pass
 
-                # self.logger.info('User %s disconnected from service.' \
-                #                  % parts[1])
+                self.logger.info('User %s disconnected from service.' \
+                                  % parts[1])
 
-                # sock.send("500 BYE\n;")
+                # We know that the user is registered if he is in the list
+                # of connected sockets
+                if self.socks2names[sock] != None
+                    sock.send("500 BYE\n;")
+                    sock.shutdown()
+                    sock.close()
+                else:
+                    sock.send("501 ERROR\n")
 
                 # Remove the socket from all relevant data structures and close
                 # it.
 
         elif parts[0] == "USERLIST":
             self.logger.info('Request for list of users.')
-
+            
             # The requesting user is also in this list so we subtract 1.
             num_users = len(self.names2info) - 1
             first = True
 
+            if len(self.names2info) == 1
+                msg = "301 ONLY USER"
+                return
+            
             msg = "300 INFO %d" % num_users
 
             for name in self.names2info:
@@ -258,8 +269,7 @@ class NameServer:
 
                 if first:
                     first = False
-
-            
+                
             self.logger.info('Sending list of %d users.' % num_users)
             sock.send(msg + "\n;")
                 

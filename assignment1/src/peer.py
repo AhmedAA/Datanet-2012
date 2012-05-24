@@ -380,6 +380,46 @@ class ChatPeer:
         Establish a peer-to-peer connection with another peer.
         """
 
+        data = sock.recv(ChatPeer.BUFFER_SIZE)
+        print("Received: %s" % data)
+        parts = data.split()
+
+        # Inspect the data and respond according to the protocol.
+        if parts[0] == "HELLO" and len(parts) >= 3:
+            print("Somebody saying hello")
+            # Somebody saying hello - woot
+            peer_port = 1234
+            try:
+                peer_port = int(parts[2])
+            except ValueError:
+                # 202 Write some error message and quit
+                sock.send("202 REGISTRATION REQUIRED")
+                sock.flush() #Get that data pumped into the network
+                sock.shutdown()
+                sock.close()
+            
+            print("Port was correct: %s" % parts[2])
+            if parts[1] == "None":
+                sock.send("101 TAKEN")
+                sock.close()
+                return
+            elif parts[1] in self.names2info.iterkeys():
+                # WRITE 101 TAKEN
+                sock.send("101 TAKEN")
+                sock.close()
+                return
+
+            # All should be fine and dandy - proceed
+            #
+            ip, port = addr
+            
+            sock.send("100 CONNECTED") # Assert everything is sent
+
+            print("All is good, peer registered")
+            
+            self.names2info[parts[1]] = ( sock, addr, peer_port)
+            self.socks2names[sock] = parts[1]
+
         # This function should return the newly created socket.
 
     def send_private_msg(self, nick, msg):
