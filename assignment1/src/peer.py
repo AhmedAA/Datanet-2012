@@ -227,7 +227,25 @@ class ChatPeer:
         if caller:
             # This peer is initiating the connection and should start the
             # handshake protocol.
-            pass
+            sock.send("HELLO %s %s" %(self.nick, self.client_listen_port))
+            data = sock.recv(ChatPeer.BUFFER_SIZE)
+            parts = data.split()
+
+            # Callee has refused to engage a chat session
+            if parts[0] == "201":
+                print "Peer refused connection"
+            # You need to register
+            elif parts[0] == "202":
+                print "Registration required"
+            # Handshake incomplete
+            elif parts[0] == "203":
+                print "Not enough information to handshake"
+            elif parts[0] == "200":
+                print "Connected"
+                self.socks2names[sock] = nick
+            # Teh hurr
+            else:
+                print "derp peer"
 
         else:
             # We are responding to a handshake from another peer.
@@ -294,17 +312,20 @@ class ChatPeer:
             if parts[1] == '*':
                 self.broadcast(' '.join(parts[2:]))
                 return
-            elif parts[1] not in self.peers and self.connected:
-                addr, port = self.get_nick_addr(parts[1])
-
-                # Connect with the peer and peform the handshake protocol.
-
             elif not self.connected:
                 self.logger.error('Could not connect to peer because we are ' \
                                   'not connected to the name-server.')
 
                 print "Could not connect to peer '%s'" % parts[1]
                 return
+            elif parts[1] not in self.peers and self.connected:
+                addr, port = self.get_nick_addr(parts[1])
+                p_sock = self.connect_to_peer(addr, port)
+                # parts[1] is the nick, and we set True to let the method know
+                # that we are the caller
+                self.handshake_peer(p_sock, addr, parts[1], port, True)
+
+                # Connect with the peer and peform the handshake protocol.
             
                         
             # Send the message to the peer.
@@ -380,47 +401,22 @@ class ChatPeer:
         Establish a peer-to-peer connection with another peer.
         """
 
-        data = sock.recv(ChatPeer.BUFFER_SIZE)
-        print("Received: %s" % data)
-        parts = data.split()
+        try:
+            peer_socket = socket.socket(
+                socket.AF_INET, socket.SOCK_STREAM)
 
-        # Inspect the data and respond according to the protocol.
-        if parts[0] == "HELLO" and len(parts) >= 3:
-            print("Somebody saying hello")
-            # Somebody saying hello - woot
-            peer_port = 1234
-            try:
-                peer_port = int(parts[2])
-            except ValueError:
-                # 202 Write some error message and quit
-                sock.send("202 REGISTRATION REQUIRED")
-                sock.flush() #Get that data pumped into the network
-                sock.shutdown()
-                sock.close()
-            
-            print("Port was correct: %s" % parts[2])
-            if parts[1] == "None":
-                sock.send("101 TAKEN")
-                sock.close()
-                return
-            elif parts[1] in self.names2info.iterkeys():
-                # WRITE 101 TAKEN
-                sock.send("101 TAKEN")
-                sock.close()
-                return
+            peer_socket.connect((
+                addr,
+                port))
+            return peer_socket
 
-            # All should be fine and dandy - proceed
-            #
-            ip, port = addr
-            
-            sock.send("100 CONNECTED") # Assert everything is sent
+        except:
+            self.logger.exception("Failed connecting with peer")
+            return 1
 
-            print("All is good, peer registered")
-            
-            self.names2info[parts[1]] = ( sock, addr, peer_port)
-            self.socks2names[sock] = parts[1]
-
+        
         # This function should return the newly created socket.
+        
 
     def send_private_msg(self, nick, msg):
         """
@@ -436,6 +432,20 @@ class ChatPeer:
         """
         Get the address belonging to a specific nick name.
         """
+        self.nameserver_sock.send("LOOKUP %s" % nick)
+
+        data = self.nameserver_sock.recv(ChatPeer.BUFFER_SIZE)
+        parts = data.split()
+
+        if len(parts) > 1 and parts[0] == "404"
+            dummy = "dummy"
+        elif len(parts) > 3 and parts[0] == "400"
+            try:
+                port = int(parts[3])
+                return (parts[2], port)
+            except:
+                self.logger.error("Shit happened")
+                        
 
         # This function should return the ip address and a port number that
         # user 'nick' can be reached at.
