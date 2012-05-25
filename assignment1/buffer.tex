@@ -16,3 +16,9 @@ BDP tells you the maximum amount of data on a network circuit at any given time.
 for protocols; if the network has a very large end-to-end delay, then protocols relying on consistent
 and rapid transmission will have issues. Instead, the protocols should take the network into consideration
 and scale for a larger buffer transmission.
+
+This means that if you have a buffer which is too small, you may end up
+with insufficient amounts of data transferred across a large end-to-end
+delay. Inversely, if your buffer is too large, then you will wait too long
+to begin sending. As such, gauging the BDP is quite important when
+considering buffer sizes.
