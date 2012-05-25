@@ -145,16 +145,19 @@ class ChatPeer:
                     # - Check if anything was entered on the keyboard.
                     data = sys.stdin.readline()
                     if data:
-                       self.parse_msg(data) 
+                       self.parse_msg(data)
+
+
+                    data = s.recv(ChatPeer.BUFFER_SIZE)
                 elif(s == self.client_listen_sock):
                     # - Check if a new peer is trying to connect with you.
                     #Accept and handshake
                     client, address = s.accept()
-                    self.handshake(client, address)
+                    self.peer_handshake(client, address)
                 else:
                     # - Check if the name server is trying to send you a message
                     # - Check if a peer is trying to send you a message.
-                    msg = s.recv(self.BUFFER_SIZE)
+                    msg = s.recv(ChatPeer.BUFFER_SIZE)
                     if msg:
                         self.parse_and_print(msg, s)
                     else:
@@ -169,6 +172,30 @@ class ChatPeer:
         (potentially) display a message to the user.
         """
 
+        parts = msg.split()
+
+        if(s == self.name_server_sock):
+            print "FROM NS: %s" % msg
+        else:
+            if(len(parts) > 2 and parts[0] == "MSG"):
+                peer_nick = parts[1]
+                message = ' '.join(parts[2:])
+                print "%s says: %s" % (peer_nick, message)
+
+            elif(len(parts) > 1 and parts[0] == "LEAVE"):
+                try:
+                    peer_nick = parts[1]
+                    del self.socks2names[sock]
+                    del self.peers[peer_nick]
+                    sock.send("600 BYE")
+                    sock.disconnect()
+                    sock.close()
+                except:
+                    print "Somebody tried leaving"
+                    sock.send("601 ERROR")
+            else:
+                print "You might have received unwanted messages"
+                print "%s" % msg
         # You should analyse the message and respond according to the protocol.
         # You may assume that any message that does not adhere to the protocol
         # is garbage and can be discarded.
@@ -243,6 +270,7 @@ class ChatPeer:
             elif parts[0] == "200":
                 print "Connected"
                 self.socks2names[sock] = nick
+                self.peers[nick] = (sock, addr, port)
             # Teh hurr
             else:
                 print "derp peer"
