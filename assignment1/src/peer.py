@@ -465,9 +465,9 @@ class ChatPeer:
         data = self.nameserver_sock.recv(ChatPeer.BUFFER_SIZE)
         parts = data.split()
 
-        if len(parts) > 1 and parts[0] == "404"
+        if len(parts) > 1 and parts[0] == "404":
             dummy = "dummy"
-        elif len(parts) > 3 and parts[0] == "400"
+        elif len(parts) > 3 and parts[0] == "400":
             try:
                 port = int(parts[3])
                 return (parts[2], port)
