@@ -233,7 +233,7 @@ class NameServer:
 
                 # We know that the user is registered if he is in the list
                 # of connected sockets
-                if self.socks2names[sock] != None
+				if self.socks2names[sock] != None:
                     sock.send("500 BYE\n;")
                     sock.shutdown()
                     sock.close()
