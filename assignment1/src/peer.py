@@ -146,9 +146,6 @@ class ChatPeer:
                     data = sys.stdin.readline()
                     if data:
                        self.parse_msg(data)
-
-
-                    data = s.recv(ChatPeer.BUFFER_SIZE)
                 elif(s == self.client_listen_sock):
                     # - Check if a new peer is trying to connect with you.
                     #Accept and handshake
@@ -367,6 +364,10 @@ class ChatPeer:
             # format: /leave
             self.disconnect()
 
+        elif parts[0] == "/help":
+            print 'Step 1: /connect <hostname> <port>'
+            print 'Step 2: /nick <nickname>'
+            print 'Step 3: /register'
         elif parts[0] == "/quit":
             # format: /quit
             print 'Shutting down...'

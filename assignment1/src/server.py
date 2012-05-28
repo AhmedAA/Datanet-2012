@@ -228,17 +228,17 @@ class NameServer:
             #if parts[1] in self.names2info.iterkeys():
             #    pass
 
-                self.logger.info('User %s disconnected from service.' \
+            self.logger.info('User %s disconnected from service.' \
                                   % parts[1])
 
-                # We know that the user is registered if he is in the list
-                # of connected sockets
-				if self.socks2names[sock] != None:
-                    sock.send("500 BYE\n;")
-                    sock.shutdown()
-                    sock.close()
-                else:
-                    sock.send("501 ERROR\n")
+            # We know that the user is registered if he is in the list
+            # of connected sockets
+            if self.socks2names[sock] != None:
+                sock.send("500 BYE\n;")
+                sock.shutdown()
+                sock.close()
+            else:
+                sock.send("501 ERROR\n")
 
                 # Remove the socket from all relevant data structures and close
                 # it.
@@ -250,7 +250,7 @@ class NameServer:
             num_users = len(self.names2info) - 1
             first = True
 
-            if len(self.names2info) == 1
+            if len(self.names2info) == 1:
                 msg = "301 ONLY USER"
                 return
             
