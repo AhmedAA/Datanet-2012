@@ -43,9 +43,53 @@ CA -> CB: MSG clienta Well, hello to you
 \end{verbatim}
 
 \subsection{Question 4}
+Peers are either 'connected' or not 'connected', based on their
+ability to reach the nameserver. As such, if the socket to the nameserver
+dies, all communication must be halted until the connection is re-stablished.
+
+The alternative, is to disconnect entirely if the connection to the nameserver fails.
+
+Socket connections to peers need not influence the rest of the flow, they should simply die
+off and disconnect. It may be user-friendly in those cases to try and reconnect, if possible.
+Often, popular services provide a reconnection-period, where they will try and re-establish the
+connection behind-the-scenes. However, that is beyond the scope of what we've had the time to do.
+
+
 \subsection{Question 5}
+There are multiple ways to solve this. The reason we need to contact N peers, is that we're doing all
+of the work ourselves. In order to reduce this, the work must be farmed out to other peers, which will
+allow us to achieve an O(log n) running-time, if we're using a data-structure that maintains a log n height.
+
+The basic idea is to distribute the broadcast amongst the peers. A naive implementation there-of might work
+through a simple tree-structure, that is passed on to child peers, which will pick off the top child and pass
+the left and right side off to two other peers. Other implementations utilize minimum spanning trees and reverse
+shortest-path lookups, to make sure that the same broadcast message isn't propagated across the same node more than
+once. Consider a line of nodes, only connecting to the node ahead and behind of it, and how many messages need to pass
+through them if there are say, 4 in a line, and the last one connects to 20 nodes.
+
 \subsection{Question 6}
+This depends on the amount of joins and leaves. In a system, where we have a high frequency of joins and leaves, it is
+definitely advisable to keep the sockets alive and well. The overhead of re-establishing the connection may exceed the
+cost of keeping it alive, when X amount of peers connect/leave every period Y.
+
 \subsection{Question 7}
+One option is to store and maintain the notion of 'groups' on the server, and expanding the protocol to provide access to
+a command to form a group, invite people to your group and leave a group. This maintains the information entirely on the server.
+
+Another option is to simply let clients say 'I want to broadcast this message to these 5 nicks'. This has the advantage of not
+requiring the server to maintain any state to support this, and only a single addition to the protocol, namely a 'Broadcast to these
+select nicks' command. This would have the downside, that you need to make sure the user has permissions to broadcast to those individuals,
+requiring either the nicks to authenticate against the server with a new protocol command designed for 'Can this user broadcast to you?'.
+
+As such, the burden of deciding whether someone can message you, remains on the client.
+
 \subsection{Question 8}
+Yes. The connection is not encrypted in any way. A simple solution is to utilize SSL to encrypt communication, such that you have the
+benefits of the security provided by SSL. 
+
 \subsection{Question 9}
+Our implementation is not robust, no. However, a robust implementation would need to verify the syntax and format of the messages being
+sent, to prevent malicious peers from abusing things. Also, proper timeouts will help to eliminate hanging connections and similar.
+
 \subsection{Question 10}
+
