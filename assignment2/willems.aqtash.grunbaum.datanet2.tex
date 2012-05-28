@@ -1,0 +1,81 @@
+\documentclass[10pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[danish]{babel}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage[pdftex]{color,graphicx}
+\usepackage{fancyhdr}
+\usepackage{textcomp}
+\usepackage{lmodern}
+\usepackage{xcolor}
+\usepackage{multicol}
+\usepackage{soul}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{float}
+%\usepackage{hyperref}
+\pagestyle{fancy}
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+
+%If in need of a header for the document, uncomment this and add desired text!
+%\fancyhead[LO,LE]{}
+%\fancyhead[RO,RE]{}
+%%%%%%%%%%%% END OF PREAMBLE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+\begin{titlepage}
+
+\begin{center}
+
+
+
+\textsc{\LARGE First assignment}\\[1.5cm]
+
+\textsc{\Large Computer Networking, block 4 2012}\\[0.5cm]
+
+
+\HRule \\[0.4cm]
+
+%{ \bfseries Second G-assignment \\ User Processes and System Calls in BUENOS}\\[1cm]
+%\includegraphics[width=0.8\textwidth]{carrie}\\[0.1cm]
+
+
+\HRule \\ [7.5cm]
+
+
+% Author and supervisor
+\begin{minipage}{0.5\textwidth}
+\begin{flushleft} \large
+Ahmed Al Aqtash \\
+\textit{ahmed.aqtash@gmail.com}\\
+Nicolai Willems \\
+\textit{niwil90@gmail.com}\\
+Martin Grünbaum \\
+\textit{martin@itsolveonline.net}\\
+\end{flushleft}
+\end{minipage}
+\begin{minipage}{0.4\textwidth}
+\begin{flushright} \large
+\textbf{\today} \\
+\end{flushright}
+\end{minipage}
+
+\vfill
+
+% Bottom of the page front page
+
+
+\end{center}
+
+\end{titlepage}
+\newpage
+\tableofcontents
+\newpage
+\include{storeforward}
+\include{buffer}
+\include{dns}
+\include{http}
+\include{transport}
+\include{practical}
+\end{document}
