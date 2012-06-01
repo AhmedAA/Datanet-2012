@@ -1,5 +1,8 @@
 \section{Routing}
-\subsection{Initial routing table of E}
+The following tables describes the routing table for
+node E from propagation 0 to 2.
+
+\subsection{Initial routing table of E T=0}
 \begin{tabular}{| l | l | l |}
     \hline
     Destination & Cost & Next Hop \\ \hline
@@ -27,3 +30,29 @@
     D & 16 & C \\ \hline
 \end{tabular}
 \subsection{Failure situation}
+There is a problem often called the 'count-to-infinity' problem,
+which can occur in a DV algorithm utilizing f.ex. Bellman-Ford. The
+basic premise of the issue, is that if a link cost increases as a
+result of a link failure, then you risk a situation where two nodes
+will continually update the other node with a new cost, until a
+threshhold is met where one of the nodes has a less costly route
+elsewhere. This can happen when a node falsely believes that it can
+use a lower-cost route, through another node, which itself believes
+that it can use a lower-cost route through the first node. As such,
+a ping-pong effect occurs until the cost is sufficiently high.
+
+There are a number of solutions to this problem. One such attempt at
+a solution is poisoned reverse, which attempts to solve the problem by
+letting nodes tell their next-hop that their count to the destination
+they're headed towards is infinite. This prevents routin back through
+the same node, but does not work in a situation where 3 or more nodes
+are involved in the infinite count. Poisoned reverse also suffers from
+the issue that it significantly increases routing announcement sizes,
+for a variety of network topologies.
+
+Another solution is split-horizon with poison reverse. Split-horizon
+dictates that a router is prohibited from advertising a route back
+onto the interface from which it picked it up. Notably, RIP uses
+split-horizon with poisoned reverse.
+
+
