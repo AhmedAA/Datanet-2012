@@ -1,0 +1,29 @@
+\section{Internet Protocol}
+This section answers the questions regarding IP(Section 1.2)
+
+\subsection{Addresses and network masks}
+\paragraph{Part 1: } Se below listing for answers o the different questions.
+
+\begin{enumerate}
+\item From a routers Point of view, network masks minimizes the information
+needed to route efficiently. Said differently, A route can based on an IP'
+prefix tell where to send the information.
+\item Network masks may bee expressed as an IP adress, that meaning in
+dot-notation, formed as 4 numbers expressing the number of bits occupied by the
+prefix. 255.225.255 is not a valid netmask, since it translates to
+11111111.11100001.11111111.0. The slash-notation just specifies how many of the
+bits is prefix in the mask.
+\item In the classfull scheme, network masks are always divided in 8-bit and
+always occupying a full 8-bit group, this results in 4 different classes, A, B,
+C and D, occupying respectively 0, 8, 16 or 32 bits of the network address.
+Classles on the other hand only specifies the number of bits occupied and are
+therfore not bound by the quads.
+\item Yhe networkaddress part can be derived by subtracting the inverted
+network mask from the given address. When presented with an address and the 
+mask, you can derive the broadcast address by inverting the networkmask and 
+adding the network address. The number of available addresses is: 
+$2^{32 - n}-1$.
+\end{enumerate}
+
+\subsection{Network Address Translation}
+

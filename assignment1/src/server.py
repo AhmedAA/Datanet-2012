@@ -94,7 +94,6 @@ class NameServer:
 
         # Inspect the data and respond according to the protocol.
         if parts[0] == "HELLO" and len(parts) >= 3:
-            print("Somebody saying hello")
             # Somebody saying hello - woot
             peer_port = 1234
             try:
@@ -103,18 +102,15 @@ class NameServer:
                 # 102 Write some error message and quit
                 sock.send("102 REGISTRATION REQUIRED")
                 sock.flush() #Get that data pumped into the network
-                sock.shutdown()
-                sock.close()
+
+            self.logger.info("Handshaking peer: %s" % data)
             
-            print("Port was correct: %s" % parts[2])
-            if parts[1] == "None":
+            if parts[1] == "None" or parts[1] in self.names2info.keys():
+                self.logger.info("Peer tried taking another peers nickname")
                 sock.send("101 TAKEN")
+                sock.shutdown(socket.SHUT_RDWR)
                 sock.close()
-                return
-            elif parts[1] in self.names2info.iterkeys():
-                # WRITE 101 TAKEN
-                sock.send("101 TAKEN")
-                sock.close()
+                del self.handshakers[sock]
                 return
 
             # All should be fine and dandy - proceed
@@ -124,6 +120,7 @@ class NameServer:
             sock.send("100 CONNECTED") # Assert everything is sent
 
             print("All is good, peer registered")
+            del self.handshakers[sock]
             
             self.names2info[parts[1]] = ( sock, addr, peer_port)
             self.socks2names[sock] = parts[1]
@@ -157,7 +154,7 @@ class NameServer:
                     elif(s in self.handshakers):
                         print("Client ready for handshake")
                         self.handshake(s, self.handshakers[s])
-                        del self.handshakers[s]
+                        # del self.handshakers[s]
                     else:
                         data = s.recv(self.BUFFER_SIZE)
                         self.parse_data(data, s)
@@ -179,7 +176,6 @@ class NameServer:
                 del self.names2info[name]
                 del self.socks2names[s]
                 try:
-                    s.shutdown()
                     s.close()
                 except:
                     print("Error when closing error socket") 
