@@ -6,4 +6,6 @@
   when a client (or server) sends an invalid TCP segment. If for instance a
   client sends a SYN, receives a SYN-ACK, and then sends another SYN, the server
   will most likely send a RST packet.
-\item 
+\item The sequence number is sent with each segment of data. The first octet in
+  the segment has a sequence number, which represents the segments sequence
+  number. The acknowledgment number is part of the sequence number, and is
