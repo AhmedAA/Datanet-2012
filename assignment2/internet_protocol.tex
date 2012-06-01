@@ -28,14 +28,16 @@ This section answers the questions regarding IP(Section 1.2)
 \textbf{Part 2: } Network overview:
 
 % NW Size, NW addr, mask, broadcast, first, 5th, last
+\scalebox{0.9}{
 \begin{tabular}{| r | l | l | l | l | l | l |}
 \hline
-NW Size & NW addr       & mask            & broadcast       & first & 5th & last \\ \hline
-31      & 130.225.165.0 & 255.255.255.224 & 130.225.165.031 & first & 5th & last \\ \hline
-511     & 10.0.42.0     & 255.255.254.000 & 010.000.042.255 & first & 5th & last \\ \hline
-1       & 4.2.2.1       & 255.255.255.255 & 255.255.255.255 & first & 5th & last \\ \hline
-16383   & 192.38.108.0  & 255.255.192.000 & 192.038.127.255 & first & 5th & last \\ \hline
+Size  & NW addr        & mask            & broadcast       & first          & 5th & last \\ \hline
+31    & 130.225.165.16 & 255.255.255.224 & 130.225.165.031 & 130.225.165.01 & 130.225.165.1 & 130.225.165.30 \\ \hline
+511   & 10.0.42.0 & 255.255.254.000 & 010.000.042.255 & 010.000.042.01 & 010.000.042.6 & 010.000.043.254 \\ \hline
+1     & 4.2.2.1 & 255.255.255.255 & 255.255.255.255 & 004.002.002.01 & N/A & N/A \\ \hline
+16383 & 192.38.108.0 & 255.255.192.000 & 192.038.127.255 & 192.038.064.01 & 192.038.064.6 & 192.038.127.254 \\ \hline
 \end{tabular}
+}
 
 \subsection{Network Address Translation}
 \textbf{Part 1: } A NAT-enabled router may keep a table from Internal-IP to
