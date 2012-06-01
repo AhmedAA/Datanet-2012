@@ -1,6 +1,6 @@
 #! /usr/bin/env python2
 #
-# file: server.py
+# file: peer.py
 #
 # author: Tim van Deurzen
 #
@@ -55,12 +55,14 @@ class ChatPeer:
         self.socks2names[sys.stdin] = "stdin"
 
         # Create a log object.
-        logging.basicConfig( filename="ChatPeer.log"
-                           , level=logging.DEBUG
+        # logging.basicConfig( filename="ChatPeer.log"
+        #                   , level=logging.DEBUG
+        #                  , format = '[%(asctime)s] %(levelname)s: %(message)s'
+        #                   , filemode='a'
+        #                   )
+        logging.basicConfig( level=logging.DEBUG
                            , format = '[%(asctime)s] %(levelname)s: %(message)s'
-                           , filemode='a'
                            )
-
         self.logger = logging.getLogger('ChatPeer')
 
         # You should setup the necessary sockets and data structures here. 
@@ -74,6 +76,8 @@ class ChatPeer:
         # they provide.
         #
         # HINT: stdin (for keyboard interaction) can be approached as a socket.
+        #
+        self.setup_client_listener()
 
 
     def setup_name_server(self):
@@ -83,10 +87,10 @@ class ChatPeer:
 
         # Setup the connection with the name server.
         try:
-            self.name_server_socket = socket.socket(
+            self.name_server_sock = socket.socket(
                 socket.AF_INET, socket.SOCK_STREAM)
 
-            self.name_server_socket.connect((
+            self.name_server_sock.connect((
                 self.name_server_ip,
                 self.name_server_port))
 
@@ -111,6 +115,12 @@ class ChatPeer:
         self.client_listen_sock = socket.socket(
             socket.AF_INET, socket.SOCK_STREAM)
 
+        self.client_listen_sock.setsockopt(
+            socket.SOL_SOCKET, 
+            socket.SO_REUSEADDR,
+            1
+        );
+
         self.client_listen_sock.bind(('', self.client_listen_port))
         self.client_listen_sock.listen(self.listen_queue_size)
 
@@ -126,31 +136,44 @@ class ChatPeer:
         
         while running:
             # Print a simple prompt.
-            sys.stdout.write('\n> ')
-            sys.stdout.flush()
+            
 
             # In this loop you should:
+            iss = []
             iss = self.socks2names.keys()
-            if self.client_listen_sock: iss.append(self.client_listen_sock)
-            if self.name_server_sock: iss.append(self.name_server_sock)
+            iss.extend(self.incomming_peers.keys())
+            if self.client_listen_sock: 
+                iss.append(self.client_listen_sock)
+            if self.name_server_sock:
+                iss.append(self.name_server_sock)
+
+
 
             # outsocks used to check if it is ready to send to
             oss = self.socks2names.keys()
             
-            # some = sys.stdin.readline()
+            
+            
             rr, wr, er = select.select(iss, [], [])
             # some = sys.stdin.readline()
+            
+
             for s in rr:
                 if(s == sys.stdin):
                     # - Check if anything was entered on the keyboard.
+                    
+                    sys.stdout.write('\n> ')
+                    sys.stdout.flush()
+                    sys.stdout.flush()
+
                     data = sys.stdin.readline()
                     if data:
                        self.parse_msg(data)
                 elif(s == self.client_listen_sock):
                     # - Check if a new peer is trying to connect with you.
                     #Accept and handshake
-                    client, address = s.accept()
-                    self.peer_handshake(client, address)
+                    client, addr = s.accept()
+                    self.incomming_peers[client] = addr
                 else:
                     # - Check if the name server is trying to send you a message
                     # - Check if a peer is trying to send you a message.
@@ -171,8 +194,42 @@ class ChatPeer:
 
         parts = msg.split()
 
-        if(s == self.name_server_sock):
+        if(sock == self.name_server_sock):
             print "FROM NS: %s" % msg
+            if parts[0] == "100":
+                # Great success
+                print("Server answered 100")
+                debug = 2
+                
+            elif parts[0] == "101":
+                # Nick taken
+                print "Please chose a different nickname"
+                self.name_server_sock.close()
+                self.name_server_sock = None
+                self.connected = False
+                selg.nickname = None
+                return 1
+
+            elif parts[0] == "102":
+                # Jackass server
+                debug = 4
+                selg.nickname = None
+
+            else:
+                # FATAL - returned something completely wrong
+                debug = -1
+                selg.nickname = None
+
+        elif len(parts) > 2 and sock in self.incomming_peers:
+            #Socket is non handshaken incomming peer
+            # socket, address information, part[1,2]=nick,port, False - callee
+            if parts[0] != "HELLO":
+                sock.send("202 REGITSRATION REQUIRED")
+                return
+
+            self.logger.info("REQUEST Received from incomming peer: %s" % msg)
+            self.handshake_peer(sock, self.incomming_peers[sock],
+                parts[1], parts[2], False)
         else:
             if(len(parts) > 2 and parts[0] == "MSG"):
                 peer_nick = parts[1]
@@ -212,29 +269,12 @@ class ChatPeer:
         
         # Perform the handshake protocol.
         handshake_msg = "HELLO %s %s" % (nickname, str(self.client_listen_port))
-        res = self.name_server_socket.send(handshake_msg)
+        res = self.name_server_sock.send(handshake_msg)
 
-        if(res == None):
-            read = self.name_server_socket.recv(self.BUFFER_SIZE)
-            if read.startswith("100"):
-                # Great success
-                print("Server answered 100")
-                debug = 2
-                print("Setting self.nickname=%s" % nickname)
-                self.nickname = nickname
-            elif read.startswith("101"):
-                # Nick taken
-                debug = 3
+        print("Setting self.nickname=%s" % nickname)
+        self.nickname = nickname
 
-            elif read.startswith("102"):
-                # Jackass server
-                debug = 4
-
-            else:
-                # FATAL - returned something completely wrong
-                debug = -1
-            sys.stdout.flush()
-
+       
     def handshake_peer( self
                       , sock
                       , addr
@@ -251,7 +291,7 @@ class ChatPeer:
         if caller:
             # This peer is initiating the connection and should start the
             # handshake protocol.
-            sock.send("HELLO %s %s" %(self.nick, self.client_listen_port))
+            sock.send("HELLO %s %s" %(self.nickname, self.client_listen_port))
             data = sock.recv(ChatPeer.BUFFER_SIZE)
             parts = data.split()
 
@@ -274,7 +314,22 @@ class ChatPeer:
 
         else:
             # We are responding to a handshake from another peer.
-            pass
+            if nick == "None" and nick in self.peers.keys():
+                sock.send("201 REFUSED")
+                self.logger.info("Refused other peer - nick None or taken")
+
+            else:
+                try:
+                    _, port = addr
+                    self.socks2names[sock] = nick
+                    self.peers[nick] = (sock, addr, port)
+                    sock.send("200 CONNECTED")
+                    self.logger.info("Sucess - peer connected")
+                except:
+                    sock.send("201 REFUSED")
+                    self.logger.warning("Peer refused - faulty request")
+
+            del self.incomming_peers[sock]
 
     
     def parse_msg(self, msg):
@@ -346,8 +401,14 @@ class ChatPeer:
             elif parts[1] not in self.peers and self.connected:
                 addr, port = self.get_nick_addr(parts[1])
                 p_sock = self.connect_to_peer(addr, port)
+                print "Addr: %s Port: %s" % (addr, str(port))
                 # parts[1] is the nick, and we set True to let the method know
                 # that we are the caller
+                if(p_sock == 1):
+                    p_sock = self.connect_to_peer(addr,port)
+
+                if(p_sock == 1):
+                    return
                 self.handshake_peer(p_sock, addr, parts[1], port, True)
 
                 # Connect with the peer and peform the handshake protocol.
@@ -408,7 +469,6 @@ class ChatPeer:
             # Remove these incomming peers
             # Aka just shut them down
             for s in self.incomming_peers:
-                s.shutdown()
                 s.close()
 
         if len(self.socks2names.keys()) > 1:
@@ -416,7 +476,6 @@ class ChatPeer:
             # and close tha socks
             for s in self.socks2names.keys():
                 if not s == sys.stdin:
-                    s.shutdown()
                     s.close()
                     del self.socks2names[s]
 
@@ -430,6 +489,8 @@ class ChatPeer:
         Establish a peer-to-peer connection with another peer.
         """
 
+        print "Connecting to %s:%s" % (addr, str(port))
+
         try:
             peer_socket = socket.socket(
                 socket.AF_INET, socket.SOCK_STREAM)
@@ -441,6 +502,7 @@ class ChatPeer:
 
         except:
             self.logger.exception("Failed connecting with peer")
+            print "FAIL When connection to peer"
             return 1
 
         
@@ -454,16 +516,16 @@ class ChatPeer:
 
         sock, _, _ = self.peers[nick]
 
-        sock.send('MSG %s %s\n;' % (nick, msg))
+        sock.send('MSG %s %s' % (self.nickname, msg))
 
     
     def get_nick_addr(self, nick):
         """
         Get the address belonging to a specific nick name.
         """
-        self.nameserver_sock.send("LOOKUP %s" % nick)
+        self.name_server_sock.send("LOOKUP %s" % nick)
 
-        data = self.nameserver_sock.recv(ChatPeer.BUFFER_SIZE)
+        data = self.name_server_sock.recv(ChatPeer.BUFFER_SIZE)
         parts = data.split()
 
         if len(parts) > 1 and parts[0] == "404":
