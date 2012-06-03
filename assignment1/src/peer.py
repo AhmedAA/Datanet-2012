@@ -460,6 +460,7 @@ class ChatPeer:
         while (data == None):
                data = self.name_server_sock.recv(ChatPeer.BUFFER_SIZE)
 
+        print data
         parts = data.split()
         if parts[0] == "300":
                # If 300, then we get a userlist back, and we need to send to them
@@ -467,16 +468,32 @@ class ChatPeer:
                i = 0
                peerinfo = parts[3:]
                while i < numpeers:
-                    username = peerinfo[i * 3]
-                    addr = peerinfo[(i * 3) + 1]
-                    port = peerinfo[(i * 3) + 2]
-                    p_sock = self.connect_to_peer(addr, port)
-                    self.handshake_peer(p_sock, addr, username, port, True)
-
-                    # Send the message to the peer.
-                    if p_sock != 1:
-                        self.send_private_msg(username, msg)
-
+                    try:
+                        username = peerinfo[i * 3]
+                        addr = peerinfo[(i * 3) + 1]
+                        port = peerinfo[(i * 3) + 2]
+                        if port.endswith(','): port = port[:len(port)-1]
+                        port = int(port)
+                        p_sock = 1
+                        existing = False
+                        try:
+                            p_sock,_,_ = self.peers[username]
+                            existing = True
+                        except:
+                            p_sock = self.connect_to_peer(addr, port)
+                            self.handshake_peer(p_sock, addr, username, port, True)
+                        # Send the message to the peer.
+                        print p_sock
+                        if p_sock != 1:
+                            print "sending msg to %s" %username
+                            self.send_private_msg(username, msg)
+                            if not existing:
+                                del self.socks2names[p_sock]
+                                del self.peers[username]
+                                p_sock.close()
+                    except:
+                        self.logger.exception("something went wrong...ups")
+                    i += 1
         elif parts[0] == "301":
                # In this case we are the only user, no action taken
                print "forever alone"
