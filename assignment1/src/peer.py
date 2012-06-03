@@ -455,7 +455,31 @@ class ChatPeer:
         # Acquire a list of users from the name server and send the message to
         # all users.
 
-        pass
+        self.name_server_sock.send("USERLIST")
+        data = self.name_server_sock.recv(ChatPeer.BUFFER_SIZE)
+        while (data == None):
+               data = self.name_server_sock.recv(ChatPeer.BUFFER_SIZE)
+
+        parts = data.split()
+        if parts[0] == "300":
+               # If 300, then we get a userlist back, and we need to send to them
+               numpeers = int(parts[2])
+               i = 0
+               peerinfo = parts[3:]
+               while i < numpeers:
+                    username = peerinfo[i * 3]
+                    addr = peerinfo[(i * 3) + 1]
+                    port = peerinfo[(i * 3) + 2]
+                    p_sock = self.connect_to_peer(addr, port)
+                    self.handshake_peer(p_sock, addr, username, port, True)
+
+                    # Send the message to the peer.
+                    if p_sock != 1:
+                        self.send_private_msg(username, msg)
+
+        elif parts[0] == "301":
+               # In this case we are the only user, no action taken
+               print "forever alone"
 
 
     def disconnect(self):
