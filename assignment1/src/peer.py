@@ -207,24 +207,24 @@ class ChatPeer:
                 self.name_server_sock.close()
                 self.name_server_sock = None
                 self.connected = False
-                selg.nickname = None
+                self.nickname = None
                 return 1
 
             elif parts[0] == "102":
                 # Jackass server
                 debug = 4
-                selg.nickname = None
+                self.nickname = None
 
             else:
                 # FATAL - returned something completely wrong
                 debug = -1
-                selg.nickname = None
+                self.nickname = None
 
         elif len(parts) > 2 and sock in self.incomming_peers:
             #Socket is non handshaken incomming peer
             # socket, address information, part[1,2]=nick,port, False - callee
             if parts[0] != "HELLO":
-                sock.send("202 REGITSRATION REQUIRED")
+                sock.send("202 REGISTRATION REQUIRED")
                 return
 
             self.logger.info("REQUEST Received from incomming peer: %s" % msg)
