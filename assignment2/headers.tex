@@ -73,7 +73,7 @@ control, so it is not network assisted congestion control.\\
 \noindent \textbf{Part 2}\\
 TCP determines the transmission rate with the following:
 \[
-LastByteSent - LastByteAcked \leq min{cwnd, rwnd}
+LastByteSent - LastByteAcked \leq min\{cwnd, rwnd\}
 \]
 where cwnd is the congestion window, and rwnd is the receiver
 window. This way TCP makes sure that the unacknowledged data at a
