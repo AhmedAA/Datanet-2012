@@ -207,24 +207,24 @@ class ChatPeer:
                 self.name_server_sock.close()
                 self.name_server_sock = None
                 self.connected = False
-                selg.nickname = None
+                self.nickname = None
                 return 1
 
             elif parts[0] == "102":
                 # Jackass server
                 debug = 4
-                selg.nickname = None
+                self.nickname = None
 
             else:
                 # FATAL - returned something completely wrong
                 debug = -1
-                selg.nickname = None
+                self.nickname = None
 
         elif len(parts) > 2 and sock in self.incomming_peers:
             #Socket is non handshaken incomming peer
             # socket, address information, part[1,2]=nick,port, False - callee
             if parts[0] != "HELLO":
-                sock.send("202 REGITSRATION REQUIRED")
+                sock.send("202 REGISTRATION REQUIRED")
                 return
 
             self.logger.info("REQUEST Received from incomming peer: %s" % msg)
@@ -455,7 +455,48 @@ class ChatPeer:
         # Acquire a list of users from the name server and send the message to
         # all users.
 
-        pass
+        self.name_server_sock.send("USERLIST")
+        data = self.name_server_sock.recv(ChatPeer.BUFFER_SIZE)
+        while (data == None):
+               data = self.name_server_sock.recv(ChatPeer.BUFFER_SIZE)
+
+        print data
+        parts = data.split()
+        if parts[0] == "300":
+               # If 300, then we get a userlist back, and we need to send to them
+               numpeers = int(parts[2])
+               i = 0
+               peerinfo = parts[3:]
+               while i < numpeers:
+                    try:
+                        username = peerinfo[i * 3]
+                        addr = peerinfo[(i * 3) + 1]
+                        port = peerinfo[(i * 3) + 2]
+                        if port.endswith(','): port = port[:len(port)-1]
+                        port = int(port)
+                        p_sock = 1
+                        existing = False
+                        try:
+                            p_sock,_,_ = self.peers[username]
+                            existing = True
+                        except:
+                            p_sock = self.connect_to_peer(addr, port)
+                            self.handshake_peer(p_sock, addr, username, port, True)
+                        # Send the message to the peer.
+                        print p_sock
+                        if p_sock != 1:
+                            print "sending msg to %s" %username
+                            self.send_private_msg(username, msg)
+                            if not existing:
+                                del self.socks2names[p_sock]
+                                del self.peers[username]
+                                p_sock.close()
+                    except:
+                        self.logger.exception("something went wrong...ups")
+                    i += 1
+        elif parts[0] == "301":
+               # In this case we are the only user, no action taken
+               print "forever alone"
 
 
     def disconnect(self):
