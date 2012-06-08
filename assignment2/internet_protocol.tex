@@ -2,12 +2,13 @@
 This section answers the questions regarding IP(Section 1.2)
 
 \subsection{Addresses and network masks}
-\textbf{Part 1: } Se below listing for answers o the different questions.
+\textbf{Part 1: } See below listing for answerst o the different questions.
 
 \begin{enumerate}
-\item From a routers Point of view, network masks minimizes the information
-    needed to route efficiently. Said differently, A route can based on an IP'
-    prefix tell where to send the information.
+\item From a routers PoV, a network mask minimizes information needed to route properly.
+    IPv4 addresses are divided into two parts, the network prefix and host identifier.
+    All hosts on a subnet have the same network prefix, thus allowing the selective routing
+    of IP packets via routers.
 \item Network masks may bee expressed as an IP adress, that meaning in
     dot-notation, formed as 4 numbers expressing the number of bits occupied by the
     prefix. 255.225.255 is not a valid netmask, since it translates to
