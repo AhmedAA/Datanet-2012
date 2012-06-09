@@ -78,4 +78,19 @@ LastByteSent - LastByteAcked \leq min\{cwnd, rwnd\}
 where cwnd is the congestion window, and rwnd is the receiver
 window. This way TCP makes sure that the unacknowledged data at a
 sender, does not exceed the minimum of the congestion window and the
-receiver window\footnote{K\&R p. 282}.
+receiver window\footnote{K\&R p. 282}.\\
+
+\noindent \textbf{Part 3}\\
+A TCP sender calculates the size of the congestion window by
+controlling how many ACKs it receives. If the data is received, by the
+receiver, then the sender increases its sending rate and the
+congestion window is increased. Should the sender need to resubmit a
+packet, it is an indication of congestion on the network, and the
+sender minimises the size of the congestion window.\\
+
+\noindent \textbf{Part 4}
+The sender needs to implement the congestion window, and the receiver
+needs to implement the receiver window.
+
+The sender needs to receive three duplicate ACKs, to know that the
+receiver is missing a segment.
