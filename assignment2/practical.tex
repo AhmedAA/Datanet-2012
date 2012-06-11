@@ -15,6 +15,14 @@ resulting in more space being used. Again, it would be easier to
 implement, but no speed-up is being achieved.
 
 \subsection{Question 2}
+Utilizing pickle to serialize and de-serialize, combined with messages packed
+as Python objects, would be our immediate way to implement things. As we
+haven't actually done the programming, we can't speak on what we actually
+did, as we haven't :)
+
+Utilizing a packed object, we would need a type and potentially a dictionary
+of arguments, that would be understood differently depending on the type of
+the message.
 
 \subsection{Question 3}
 It is possible to broadcast a message through the whole DHT. This is
@@ -42,7 +50,35 @@ could result in the peer still hanging in the DHT.
 \subsection{Question 7}
 
 \subsection{Question 8}
+A sybil attack is an attack that creates pseudonymous entities, using them
+to skewer the reputation system put in place by a peer-to-peer network.
+Identities are fairly easy to establish in this setup, and as such the existing
+setup is extremely vulnerable to a Sybil attack. One way to alleviate part of
+this is to establish a chain of trust within the peer-to-peer network, where
+trust is gradually stepped up based on how many other peers trust a given peer.
 
+One practical solution is a centralized (or de-centralized) lookup mechanism
+amongst either trusted peers or a central name lookup service, every time a
+peer needs to be validated as trusted / non-trusted. The notion of super-peers
+or trust-certifiers may enter the system at this point.
 \subsection{Question 9}
 
 \subsection{Question 10}
+\subsubsection{Advantages of DHT}
+\begin{enumerate}
+    \item No single point of failure.
+    \item Harder to trace the origin of file downloads
+    \item Is most likely much more local, than the central nameserver. Consider
+        a Danish client connecting to an American nameserver, and the latency
+        that automatically induces.
+\end{enumerate}
+\subsection{Disadvantages of DHT}
+\begin{enumerate}
+    \item Making sure the DHT is properly kept up-to-date requires additional
+        book-keeping and protocol additions for this purpose alone.
+    \item Attacks that target distributed networks of peers are vulnerable to
+        the missing central authentication, unless such is implemented. See
+        sybil attack above.
+    \item It may potentially be slower to find files in a distributed setup,
+        than if there were a central file authority.
+\end{enumerate}
