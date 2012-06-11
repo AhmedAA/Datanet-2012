@@ -71,6 +71,11 @@ or trust-certifiers may enter the system at this point.
     \item Is most likely much more local, than the central nameserver. Consider
         a Danish client connecting to an American nameserver, and the latency
         that automatically induces.
+    \item In extension of 'no single point of failure', this applies both in
+        the network aspect as well as file-retention aspect. If a single node
+        goes down, there is a high likelyhood that another node will have the
+        same file(s) someone is looking for. As such, it is much, much harder
+        to 'eliminate' a file or group of files from the network.
 \end{enumerate}
 \subsection{Disadvantages of DHT}
 \begin{enumerate}
