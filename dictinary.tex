@@ -1,0 +1,187 @@
+\documentclass[10pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[danish]{babel}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage[pdftex]{color,graphicx}
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{float}
+
+\begin{document}
+
+\section{Dictionary}
+[1] KuroseRoss Computer Networking
+
+\begin{description}
+\item[API] fork. Application Programming Interface. En grænseflade der
+    definerer hvordan man skal benyttes sig af et givent system.
+\item[end system] En terminerende ende af netværket. F.eks. Server, desktop
+    playstation eller smartphone
+\item[hosts] Se ``end system''. Disse kan deles i to kategorier, klienter og
+    servere.
+\item[network edge] Se ``end system''
+\item[communication links] Section 1.2
+\item[packet switches] En enhed der modtager på et link og sender ud på et
+    eller flere andre. VIGTIGT - disse enheder kører ikke internet
+    applikationer(Se \textbf{distributed applications}), de faciliterer kun
+    udvekslingen af dat imellem \textbf{end systems}. Typisk enten 
+    \textbf{routers} eller \textbf{link-layer switches}. 
+    Se ``Bil analogi''(DIKURevy 2012)
+\item[router] Typisk i kernen af nettet
+\item[link-layer switch] Typisk i adgangs netværk(\textbf{access networks})
+\item[access networks]
+\item[dial up] en internet forbindelse gennem telefon nettet, hvor der ringes
+    op til en \textbf{ISP}s modem, som så forbinder brugeren med nettet. Max
+    hastighed 56 kbps
+\item[DSL] fork. Digital Subscriber Line. En forbindelse gennem telefon nettet.
+    der bruges dog et DSL modem og i \textbf{CO}'en er man forbundet til en 
+    \textbf{DSLAM}. Her udnyttes forskellige frekvens bånd til at ``dele''
+    forbindelsen. Max hastighed $\downarrow$ 2Mbps $\uparrow$ 1Mbps
+\item[cable] en forbindelse der ligner DSL, men er igennem TV udbyderens net
+    istedet for tele udbyderens net.
+\item[FTTH] fork. Fiber-To-The-Home. Der ligges fiberkabler ud til kunden og de
+    modtager både TV, Radio, telefoni og internet gennem denne forbindelse. Der
+    findes to typer \textbf{PON}(Passive Optical Network) og \textbf{AON}(Active
+    Optical Network).
+\item[PON]
+\item[AON]
+\item[telco] Lokal teleudbyder, typisk udbyderen af kober hvor igennem nettet
+    udbydes.
+\item[packets] En pakke af information der bliver transmiteret over netværket.
+    Bestående af \textbf{packet header} og data.
+\item[packet header] BLA BLA
+\item[path] en vej igennem nettet
+\item[route] se \textbf{path}
+\item[transmission rate] $\frac{bits}{sekund}$, forkortes bps(bits per sekund).
+\item[ISP] fork. Internet Service Provider. Udbyder af net, Universitets-,
+    corporate-, telefoni udbyder. Findes i flere niveauer - tier {1-n}, hvor 1
+    er top niveau udbydere der alle er forbundet til hinanden, og tier n er
+    udbydere af internet til almindelige jævne mennesker.
+\item[protocol] dansk protokol - kontrakt der styrer hvordan data sendes
+    og modtages over nettet. En protokol er en mængde handlinger og
+    konventioner der faciliterer og muligør udveksling af data. [1] S. 9
+\item[CO] fork. Central Office. En bygning/instans hvor en række brugere er
+    forbundet.
+\item[DSLAM] fork. Digital Subscriber Line Access Multiplexer. Splitter telefon
+    og internet trafik fra en husholding og sender det til hhv telefon nettet
+    og internettet.
+\item[TCP/IP] Se \textbf{TCP} og \textbf{IP}
+\item[TCP] fork. Transmission Control Protocol. 
+\item[IP] fork. Internet Protocol.
+\item[IETF] fork. Internet Engineering Task Force. Organisationen der udsteder
+standarderne(Se \textbf{RFC}) for internettet.
+\item[RFC] fork. Request For Comment
+\item[IEEE] fork Institute of Electrical and Electronics Engineerings. Udsteder
+    af \textbf{IEEE 802}
+\item[IEEE 802] serie af standarder for \textbf{LAN}/\textbf{MAN}, f.eks.
+    Ethernet og WiFi.
+\item[LAN] fork. Local Area Network. Et netværk der fungerer på lokalt plan
+\item[MAN] fork. Metropolitan Area Network. Et netværk der fungerer på by plan
+\item[WAN] fork. Wide Area Network. Et netværk der fungerer på tværs af byer og
+    lande.
+\item[WWAN] fork. Wireless WAN. Se \textbf{WiFi}, \textbf{3G} og \textbf{WiMAX} 
+\item[distributed applications] applikationer der baserer sig på at være
+    forbundet. Altså to eller flere \textbf{end systems} der udveksler data.
+\item[client program] Et program der sender og modtager data fra et
+    \textbf{server program}
+\item[server program] Et program der behandler forespørgsler og svarer passende
+    på disse.
+\item[twisted-pair kober] Typisk hjemmenetværk, også kaldet ethernet kabler.
+\item[Coaxial kabel] Typisk det kabel man forbinder antennen til sit fjernsyn
+    med, bruges i f.eks. \textbf{cable} internet, imellem væg og modem.
+\item[Fiber optisk] Tynde kabler der benytter sig af lys istedet for
+    elektroniske signaler. Hastigheder op til 100 Gbps. Ingen elektromagnetisk
+    forstyrrelse og næsten ingen signal forringelse over 100 kilometer. Ikke så
+    udbredt pg.a. høje omkostninger i udstyret.
+\item[switching, circuit] Fremgangsmåde for at flytte data i nettet. Med denne
+    reserveres alle resourcer langs pakken \textbf{route} mens der
+    kommunikeres.
+\item[switching, packet] Fremgangsmåde for at flytte data i nettet. Med denne
+    reserveres ingen resourcer, og der kan derfor opstå kø, tilgengæld kan man
+    ofte få større udnyttelses af netværket.
+\item[FDM] fork. Frequency-Division Multiplexing. Bruges i circuit switching(Se
+    \textbf{switching, circuit}), med denne metode dele frekvens båndet op
+    imellem forskellige brugere.
+\item[TDM] fork. Time-Division Multiplexing. Alternativ til FDM, hvor man
+istedet for at give en del af frekvensbåndet, deler tid op i frames, som så
+deles op i slots, hvor hvert slot tildeles et sender-modtager par.
+\item[store-and-forward] teknik der benyttes når man skal sende pakker gennem
+    et netværk, først opbevares pakken og derfter sendes den. Denne metode
+    sørger for at et enkelt link kan benyttes af flere brugere samtidigt.
+\item[processing delay] tiden det tager at inspicerer \textbf{packet headers}
+    og vælge hvor pakken skal sendes hen.
+\item[queuing delay] ventetiden der forekommer når en pakke venter på at blive
+    sendt via linket.
+\item[transmission delay] er den ventetid der forekommer når man venter på at
+    alle en pakkes bits er blevet sendt via linket. Defineret som følger:
+    $L = \text{antallet af bits i pakken}, R = \text{transmission rate,
+    bps}$ og $\text{transmission delay} = \frac{L}{R}$
+\item[propagation delay] ventetiden ved overførsel af data, altså tiden det
+    tager en mængde bits at rejse over en afstand. Hastigheden varierer som
+    regel imellem $2 \dot 10^8 \text{m/s og } 3 \dot 10^8 \text{m/s}$.
+    Propagation delayet bliver således $d=\text{afstand}, s=\text{propagation
+    speed}, d/s$
+\item[total nodal delay] = $d_{proc} + d_{queu} + d_{trans} + d_{prop}$.
+\item[end-to-end delay] = $N(d_{proc} + d_{trans} + d_{prop}), N =
+    \text{Antallet af hop imellem src og dst}$
+\item[layering] et koncept der bruges til at adskille funktionalitet i
+    net-stakken, sådan at der kun fokuseres på det vigtige på det givne lag.
+    Der findes to modeller for lagdeling 5-lags og OSI 7-lags modellen.
+\item[layer, application] øverste lag, hvor i applikationer såsom HTTP, SMTP og
+    DNS er implementeret. applikations lagets pakker bliver ofte kaldet
+    beskeder.
+\item[layer, transport] ligger under applikations laget. Er her hvor TCP og UDP
+    er implementeret. Ansvaret her er at transportere pakker fra ende til ende
+    på applikation laget. En pakke på dette lag kaldes et segment.
+\item[layer, network] ligger under transport laget. Er hjemsted for IP
+    protokollen og routing protokoller generelt. Har til opgave at transportere
+    segmenter fra en host til en anden. Pakker på dette lag kaldes datagrams.
+\item[layer, link] ligger under netværks laget. Ansvaret her at at pakke
+    datagrams, sådan at de kan overføres via en bestemt protokol, eksempler er:
+    Ethernet, WiFi og Point-to-Point Protocol(PPP).  Ansvaret er ren af- og
+    dekodning af datgrammer imellem to fysiske punkter(routere el.lign). Pakker
+    på dette lag kaldes frames.
+\item[layer, physical] ligger nederst i hierakiet. Ansvaret i det fysiske lag
+    er at overføre bits fra den ene ende af et link til den anden ende. Hvor
+    link laget står for at dekode et datagram sådan at det kan sendes via
+    ethernet, er det fysiske lags ansvar at dekode datagrammets bits, sådan at
+    de kan overføres via det ønskede medium, f.eks. twisted-pair kober, fiber
+    optisk eller coaxial kabel.
+\item[TCP] fork. Transmission Control Protocol. Er en forbindelses orienteret
+    protocol med indbygget garanti for overlevering af pakker.
+\item[TCP, RTT] fork. Round Trip Time. Se EstimatedRTT, DevRTT og TimeoutInterval,
+    alle i forbindelse med TCP.
+\item[TCP, estimatedRTT] = $(1-\alpha) \cdot EstimatedRTT + \alpha \cdot SampleRTT$,
+    SampleRTT er et sample fra den nuværende forbindelse. $\alpha$ gives ofte
+    værdien 0.125 aka 1/8
+\item[TCP, devRTT] = $(1-B) \cdot DevRTT + B \cdot | SampleRTT - EstimatedRTT |$
+\item[TCP, timeout interval] = $EstimatedRTT + 4 \cdot DevRTT$
+\item[TCP, ACK] fork. Acknowledgment. Bruges fra en modtager af data til at
+    signalere til afsenderen at data er modtaget.
+\item[TCP, NAK] fork. Negative Acknowledgment. Bruges af en modtager til at
+    signalere til afsenderen at der er sket en fejl i modtagelsen.
+\item[TCP, checksum] en værdi der bruges til at kontrollerer om der er fejl i en
+    pakke. Er også en del af UDP protokollen.
+\item[TCP, Timer] bla bla
+\item[TCP, Sequence number] bla bla
+\item[TCP, Window, pipelining] bla bla
+
+\end{description}
+
+\section{Eksempler}
+
+\subsection{Time-Division Multiplexing}
+Fil på 640.000 bits sendes fra Host A til Host B, alle mellemled bruger TDM med
+24 slots og en bitrate på 1.536 Mbps og det tager 500 msec at etablerer en
+forbindelse.
+
+\[
+\frac{1.536 Mbps}{24} = 64 kbps \\
+\frac{640000 bits}{64 kbps} = 10 s
+\]
+
+Plus etablerings tiden, giver $10,5$ sekunder
+
+\end{document}
