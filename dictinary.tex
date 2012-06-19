@@ -164,9 +164,16 @@ deles op i slots, hvor hvert slot tildeles et sender-modtager par.
     signalere til afsenderen at der er sket en fejl i modtagelsen.
 \item[TCP, checksum] en værdi der bruges til at kontrollerer om der er fejl i en
     pakke. Er også en del af UDP protokollen.
-\item[TCP, Timer] bla bla
-\item[TCP, Sequence number] bla bla
-\item[TCP, Window, pipelining] bla bla
+\item[TCP, Timer] implementeres ofte i protokoller med pålidig overførsel,
+    sådan at pakker der enten ikke får et \textbf{ACK} tilbage, eller ikke
+    ankommer(og dermed heller ikke bliver ACK'et), kan blive gensendt.
+\item[TCP, Sequence number] et fortløbende nummer der identificerer pakker
+    sådan at man kan nøjes med at gensende tabte pakker, og sådan at en
+    datastrøm kan genskabes i rigtig rækkefølge hos modtageren.
+\item[TCP, Window, pipelining] er en teknik der bruges for at udnytte linket
+    bedre, i modsætning til stop-and-wait. Man tillader at flere pakker kan
+    være ``in-flight'' og opbevarer så ikke ACK'ede pakker i en buffer, så de
+    kan gensendes ved timeout el.lign.
 
 \end{description}
 
