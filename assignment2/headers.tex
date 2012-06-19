@@ -26,6 +26,70 @@ The client is able to send data to the server after receiving the sequence and
 acknowledgment numbers with the SYN-ACK packet.\\
 
 \noindent \textbf{Part 3}
-\begin{wrapfigure}{L}{1\textwidth}
+\begin{figure}[h!]
   \includegraphics[scale=0.5]{tcpstuff.png}
-\end{wrapfigure}
+\end{figure}
+\newpage
+\subsection{High performance TCP}
+\begin{enumerate}
+\item The maximum value is 64 KB, because the maximum size of a TCP packet is
+    64 KB. It takes a lot of packages to send large files with such a small
+    size.
+\item First we calculate the maximum amount of bytes we can push out on the
+    link
+    \[
+        \frac{100\cdot 10^6}{8} = 12.5 \cdot 10^6 B/s
+    \]
+    Then we calculate the maximum buffer size (64 KB) to bytes
+    \[
+        64 \cdot 10^6 B
+    \]
+    Note that we have not used powers of 2. Now we can calculate the RTT with
+    \[
+        \frac{64 \cdot 10^3 B}{12.5 \cdot 10^6 B/s} = 0.00512 s
+    \]
+    So the RTT is approximately 5 ms
+\item Kind = 3, Length = 3, shift.cnt = 4
+\end{enumerate}
+
+\subsection{Flow and Congestion Control}
+\textbf{Part 1}\\
+Modern TCP implements congestion control with the algorithms:
+Slow-start, congestion avoidance, fast retransmit and fast
+recovery. Slow start means that TCP sends packets at a slow pace,
+although rising exponentially, and then starts over when detecting
+some packet loss. Congestion avoidance is usually implemented with the
+AIMD scheme, meaning a linear growth in packets send, and an
+exponential reduction when packet loss is detected. Fast retransmist
+means that if the sender does not receive an ACK packet from the
+receiver, the sender will attempt to send the packet (dumped down
+explation). Fast recovery is a variation of the slow start algorithm,
+which utilises fast retransmit and congestion avoidance.
+
+TCP network congestion control is different from network assisted congestion
+control, so it is not network assisted congestion control.\\
+
+\noindent \textbf{Part 2}\\
+TCP determines the transmission rate with the following:
+\[
+LastByteSent - LastByteAcked \leq min\{cwnd, rwnd\}
+\]
+where cwnd is the congestion window, and rwnd is the receiver
+window. This way TCP makes sure that the unacknowledged data at a
+sender, does not exceed the minimum of the congestion window and the
+receiver window\footnote{K\&R p. 282}.\\
+
+\noindent \textbf{Part 3}\\
+A TCP sender calculates the size of the congestion window by
+controlling how many ACKs it receives. If the data is received, by the
+receiver, then the sender increases its sending rate and the
+congestion window is increased. Should the sender need to resubmit a
+packet, it is an indication of congestion on the network, and the
+sender minimises the size of the congestion window.\\
+
+\noindent \textbf{Part 4}
+The sender needs to implement the congestion window, and the receiver
+needs to implement the receiver window.
+
+The sender needs to receive three duplicate ACKs, to know that the
+receiver is missing a segment.

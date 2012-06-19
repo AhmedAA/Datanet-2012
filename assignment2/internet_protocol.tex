@@ -2,17 +2,21 @@
 This section answers the questions regarding IP(Section 1.2)
 
 \subsection{Addresses and network masks}
-\textbf{Part 1: } Se below listing for answers o the different questions.
+\textbf{Part 1: } See below listing for answerst o the different questions.
 
 \begin{enumerate}
-\item From a routers Point of view, network masks minimizes the information
-    needed to route efficiently. Said differently, A route can based on an IP'
-    prefix tell where to send the information.
-\item Network masks may bee expressed as an IP adress, that meaning in
-    dot-notation, formed as 4 numbers expressing the number of bits occupied by the
-    prefix. 255.225.255 is not a valid netmask, since it translates to
-    11111111.11100001.11111111.0. The slash-notation just specifies how many of the
-    bits is prefix in the mask.
+\item From a routers PoV, a network mask minimizes information needed to route properly.
+    IPv4 addresses are divided into two parts, the network prefix and host identifier.
+    All hosts on a subnet have the same network prefix, thus allowing the selective routing
+    of IP packets via routers.
+\item A network mask can be split into 4 8-bit sections, each representing the
+    number of bits used by the network mask. This is equivalent to 4 decimal
+    numbers from 0-255, expressed in dot-notation as if it were an IP address.
+    The network mask 255.225.255.0 (binary form 11111111.11100001.11111111.0)
+    is not valid. In a network mask, the left-most part must be all 1's, and
+    the right-most part all 0's, which is clearly not the case here. The 
+    slash-notation /28 specifies how many of the 32 available bits are prefix.
+    As such, /28 is equal to the network mask 255.255.255.240.
 \item In the classfull scheme, network masks are always divided in 8-bit and
     always occupying a full 8-bit group, this results in 4 different classes, A, B,
     C and D, occupying respectively 0, 8, 16 or 32 bits of the network address.
@@ -21,8 +25,9 @@ This section answers the questions regarding IP(Section 1.2)
 \item The networkaddress part can be derived by subtracting the inverted
     network mask from the given address. When presented with an address and the 
     mask, you can derive the broadcast address by inverting the networkmask and 
-    adding the network address. The number of available addresses is: 
-    $2^{32 - n}-1$.
+    performing a Binary OR between the two. 
+    The number of available addresses is: $2^{n}-2$ where n is the number
+    of bits used for the host portion of the address.
 \end{enumerate}
 
 \textbf{Part 2: } Network overview:
@@ -32,10 +37,10 @@ This section answers the questions regarding IP(Section 1.2)
 \begin{tabular}{| r | l | l | l | l | l | l |}
 \hline
 Size  & NW addr        & mask            & broadcast       & first          & 5th & last \\ \hline
-31    & 130.225.165.16 & 255.255.255.224 & 130.225.165.031 & 130.225.165.01 & 130.225.165.1 & 130.225.165.30 \\ \hline
-511   & 10.0.42.0 & 255.255.254.000 & 010.000.042.255 & 010.000.042.01 & 010.000.042.6 & 010.000.043.254 \\ \hline
-1     & 4.2.2.1 & 255.255.255.255 & 255.255.255.255 & 004.002.002.01 & N/A & N/A \\ \hline
-16383 & 192.38.108.0 & 255.255.192.000 & 192.038.127.255 & 192.038.064.01 & 192.038.064.6 & 192.038.127.254 \\ \hline
+31    & 130.225.165.16 & 255.255.255.224 & 130.225.165.31 & 130.225.165.1 & 130.225.165.5 & 130.225.165.30 \\ \hline
+511   & 10.0.42.0 & 255.255.254.0 & 10.0.42.255 & 10.0.42.1 & 10.0.42.5 & 10.0.43.254 \\ \hline
+1     & 4.2.2.1 & 255.255.255.255 & 4.2.2.1 & 4.2.2.1 & N/A & 4.2.2.1 \\ \hline
+16383 & 192.38.108.0 & 255.255.192.0 & 192.38.127.255 & 192.38.108.1 & 192.38.108.5 & 192.38.127.254 \\ \hline
 \end{tabular}
 }
 
@@ -53,4 +58,3 @@ same host.
 information stored in the ``deeper'' levels of an IP packet, therefore going to
 fx. TCP/UDP layers, or even worse, when a higher level protocol is network
 dependent, this could result in NAT breaking the protocol.
-

@@ -1,0 +1,89 @@
+\section{Practical part}
+This section gives answers to the questions asked regarding the DHT
+implementation of the name server.
+
+\subsection{Question 1}
+It is possible to use the same socket for both protocols. To
+differentiate between the two protocols, we could use some exception
+handling that checks the format of the request to determine which
+protocol should be used.
+
+It would be easier to implement two different sockets, but doing so
+will not result in a faster service. It would just move the
+calculation overhead, from the exception handling, to the sockets,
+resulting in more space being used. Again, it would be easier to
+implement, but no speed-up is being achieved.
+
+\subsection{Question 2}
+Utilizing pickle to serialize and de-serialize, combined with messages packed
+as Python objects, would be our immediate way to implement things. As we
+haven't actually done the programming, we can't speak on what we actually
+did, as we haven't :)
+
+Utilizing a packed object, we would need a type and potentially a dictionary
+of arguments, that would be understood differently depending on the type of
+the message.
+
+\subsection{Question 3}
+It is possible to broadcast a message through the whole DHT. This is
+done by sending a message to the sending nodes neighbours, and letting
+the neighbours forward that message. This a naive implementation.
+
+\subsection{Question 4}
+It should be stressed that the same value for $k$ should be used, no
+matter what version is being used. If different values are used, a
+peer might think she is contacting a person she knows, although it
+could be an entirely different one, due to the different values of $k$.
+
+\subsection{Question 5}
+Due to ambiguity it should not be able to send a message to nodes with
+conflicting ids, but the service should still be able to function as a
+whole. It can be avoided by checking all $ks$ in the $kbuckets$, and
+make sure that the username a user wants, is not already in use.
+
+The assumption in the question guarentees that this will not happen.
+
+\subsection{Question 6}
+A user might disconnect from the DHT in a non-graceful way, which
+could result in the peer still hanging in the DHT.
+
+\subsection{Question 7}
+
+\subsection{Question 8}
+A sybil attack is an attack that creates pseudonymous entities, using them
+to skewer the reputation system put in place by a peer-to-peer network.
+Identities are fairly easy to establish in this setup, and as such the existing
+setup is extremely vulnerable to a Sybil attack. One way to alleviate part of
+this is to establish a chain of trust within the peer-to-peer network, where
+trust is gradually stepped up based on how many other peers trust a given peer.
+
+One practical solution is a centralized (or de-centralized) lookup mechanism
+amongst either trusted peers or a central name lookup service, every time a
+peer needs to be validated as trusted / non-trusted. The notion of super-peers
+or trust-certifiers may enter the system at this point.
+\subsection{Question 9}
+
+\subsection{Question 10}
+\subsubsection{Advantages of DHT}
+\begin{enumerate}
+    \item No single point of failure.
+    \item Harder to trace the origin of file downloads
+    \item Is most likely much more local, than the central nameserver. Consider
+        a Danish client connecting to an American nameserver, and the latency
+        that automatically induces.
+    \item In extension of 'no single point of failure', this applies both in
+        the network aspect as well as file-retention aspect. If a single node
+        goes down, there is a high likelyhood that another node will have the
+        same file(s) someone is looking for. As such, it is much, much harder
+        to 'eliminate' a file or group of files from the network.
+\end{enumerate}
+\subsection{Disadvantages of DHT}
+\begin{enumerate}
+    \item Making sure the DHT is properly kept up-to-date requires additional
+        book-keeping and protocol additions for this purpose alone.
+    \item Attacks that target distributed networks of peers are vulnerable to
+        the missing central authentication, unless such is implemented. See
+        sybil attack above.
+    \item It may potentially be slower to find files in a distributed setup,
+        than if there were a central file authority.
+\end{enumerate}
